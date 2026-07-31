@@ -18,7 +18,7 @@ class PrecipitationState:
         self.snow_mm_hr: float = 0.0
         self.fog_density: float = 0.0
         self.dust_density: float = 0.0
-        self.visibility_m: float = 0.0
+        self.visibility_m: float = 10000.0
         self.attenuation_coeff: Dict[str, float] = {}
 
 
@@ -39,7 +39,7 @@ class SolarThermalState:
         self.solar_azimuth_deg: float = 0.0
         self.solar_elevation_deg: float = 0.0
         self.glare_intensity: float = 0.0
-        self.ambient_temp_c: float = 0.0
+        self.ambient_temp_c: float = 20.0
         self.surface_temp_delta_c: float = 0.0
 
 
