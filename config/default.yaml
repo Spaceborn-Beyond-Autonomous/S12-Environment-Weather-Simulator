@@ -1,0 +1,22 @@
+weather:
+  effect: clear
+
+world:
+  source: ansa_world.sdf
+  generated: generated_world.sdf
+
+generator:
+  overwrite: true
+  backup: false
+
+launch:
+  auto_start_simulator: true
+
+effects:
+  supported:
+    - clear
+    - rain
+    - fog
+    - snow
+    - dust
+    - storm

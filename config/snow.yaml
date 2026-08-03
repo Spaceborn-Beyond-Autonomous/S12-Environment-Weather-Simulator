@@ -1,0 +1,19 @@
+weather:
+  effect: snow
+
+generator:
+  file: snow_generator.txt
+
+world:
+  source: ansa_world.sdf
+  output: generated_world.sdf
+
+simulation:
+  precipitation: false
+  fog: false
+  snow: true
+  dust: false
+  storm: false
+
+launch:
+  auto_start: true

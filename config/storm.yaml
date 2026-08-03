@@ -1,0 +1,21 @@
+weather:
+  effect: storm
+
+generator:
+  file: storm_generator.txt
+
+world:
+  source: ansa_world.sdf
+  output: generated_world.sdf
+
+simulation:
+  precipitation: true
+  fog: false
+  snow: false
+  dust: false
+  storm: true
+  thunder: true
+  wind: strong
+
+launch:
+  auto_start: true
