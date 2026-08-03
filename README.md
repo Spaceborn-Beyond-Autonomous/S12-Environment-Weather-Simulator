@@ -135,6 +135,157 @@ Weather Models                         World Generator
         ▼              ▼
  Weather GPS      Weather IMU
 ```
+---
+# Gazebo World Generation
+
+Directory:
+
+```text
+environment_weather_simulator/gazebo/
+```
+
+Files:
+
+```text
+world_generator.py
+
+effects/
+worlds/
+```
+
+The simulator automatically creates a simulation world based on the selected weather configuration.
+
+Current functionality includes:
+
+- Loading base world
+- Selecting weather effects
+- Inserting SDF effect models
+- Generating final simulation world
+- Exporting generated SDF world
+
+Generated worlds are ready for Gazebo simulation.
+
+---
+
+## Weather Effect Assets
+
+Current available weather assets:
+
+```text
+effects/
+├── rain.sdf
+├── fog.sdf
+├── snow.sdf
+├── dust.sdf
+└── storm.sdf
+```
+
+---
+
+# World Generation Pipeline
+
+```text
+Base World
+      │
+      ▼
+Weather Configuration
+      │
+      ▼
+World Generator
+      │
+      ▼
+Insert Weather Effects
+      │
+      ▼
+Generate SDF World
+      │
+      ▼
+Generated World
+      │
+      ▼
+Gazebo Simulation
+```
+
+---
+
+# Configuration System
+
+The simulator uses YAML configuration files to describe weather conditions.
+
+Configuration directory:
+
+```text
+config/
+```
+
+Current configuration files:
+
+```text
+clear_weather.yaml
+default.yaml
+dust_storm.yaml
+fog.yaml
+rain.yaml
+snow.yaml
+storm.yaml
+```
+
+Each configuration defines weather parameters that are loaded by the Scenario Loader before the simulation begins.
+
+---
+
+# Launch System
+
+Unlike many simulation projects, this repository does **not** maintain separate launch files for every weather condition.
+
+Instead, a **single configurable launch file** controls the complete simulator.
+
+Launch file:
+
+```text
+launch/weather.launch.py
+```
+
+This launch file:
+
+- Reads the selected weather effect
+- Loads the corresponding YAML configuration
+- Initializes the Environment Engine
+- Calls the World Generator
+- Generates the final Gazebo world
+- Starts the simulation
+
+This approach keeps the simulator modular and avoids maintaining multiple nearly identical launch files.
+
+---
+
+# Running Different Weather Effects
+
+Examples:
+
+```bash
+# Clear Weather
+ros2 launch environment_weather_simulator weather.launch.py effect:=clear
+
+# Rain
+ros2 launch environment_weather_simulator weather.launch.py effect:=rain
+
+# Fog
+ros2 launch environment_weather_simulator weather.launch.py effect:=fog
+
+# Snow
+ros2 launch environment_weather_simulator weather.launch.py effect:=snow
+
+# Dust Storm
+ros2 launch environment_weather_simulator weather.launch.py effect:=dust
+
+# Thunder Storm
+ros2 launch environment_weather_simulator weather.launch.py effect:=storm
+```
+
+Only the value of the **effect** argument changes.
+
+No additional launch files are required.
 
 ## Weather Selection
 
