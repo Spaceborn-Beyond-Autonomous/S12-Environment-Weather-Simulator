@@ -1,0 +1,16 @@
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Build & ROS build artifacts
+build/
+install/
+log/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+.DS_Store

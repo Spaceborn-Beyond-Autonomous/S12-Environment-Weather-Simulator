@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <world name="default">
+    <physics name="default_physics" type="dart">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors"><render_engine>ogre2</render_engine></plugin>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+
+    <!-- Native Gazebo Linear Wind Field Plugin -->
+    <plugin filename="gz-sim-wind-effects-system" name="gz::sim::systems::WindEffects">
+      <horizontal>
+        <magnitude>8.5</magnitude>
+        <direction>0.707 0.707 0.0</direction>
+      </horizontal>
+      <vertical>
+        <magnitude>1.2</magnitude>
+      </vertical>
+    </plugin>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="col"><geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry></collision>
+        <visual name="vis"><geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry></visual>
+      </link>
+    </model>
+
+    <light name="sun" type="directional">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 20 0 0 0</pose>
+      <direction>-0.5 0.2 -0.8</direction>
+    </light>
+  </world>
+</sdf>

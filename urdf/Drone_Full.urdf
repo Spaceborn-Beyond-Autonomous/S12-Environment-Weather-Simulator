@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ANSA Drone URDF — Optimized for Wind Perturbation & Gazebo Harmonic Dynamics
+  Fixes applied:
+  1. Center of Mass aligned with physical drone frame center.
+  2. Symmetrical propeller joint origin coordinates.
+  3. Increased MulticopterVelocityControl PID gains and acceleration limits for active disturbance rejection.
+-->
+<robot name="Drone_Full">
+
+  <!-- MAIN BODY LINK -->
+  <link name="Drone_link">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+      <mass value="0.66624" />
+      <inertia
+        ixx="0.0016209" ixy="0.0" ixz="0.0"
+        iyy="0.0022899" iyz="0.0"
+        izz="0.003725" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ansa_digital_twin/meshes/Drone_link.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.64706 0.61961 0.6 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ansa_digital_twin/meshes/Drone_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- LIDAR LINK -->
+  <link name="lidar_link">
+    <inertial>
+      <origin xyz="0.0 0.0 -0.02" rpy="0 0 0" />
+      <mass value="0.025" />
+      <inertia
+        ixx="3.69e-06" ixy="0" ixz="0"
+        iyy="4.00e-06" iyz="0"
+        izz="4.05e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ansa_digital_twin/meshes/lidar_link.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.792 0.819 0.933 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.02" rpy="0 0 0" />
+      <geometry>
+        <box size="0.05 0.05 0.06" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="lidarlink" type="fixed">
+    <origin xyz="0.0169 0.0005 -0.0075" rpy="0 0 0" />
+    <parent link="Drone_link" />
+    <child link="lidar_link" />
+  </joint>
+
+  <!-- JETSON ENCLOSURE -->
+  <link name="jetson_enclosure">
+    <inertial>
+      <origin xyz="0.0 0.0 -0.02" rpy="0 0 0" />
+      <mass value="0.254" />
+      <inertia
+        ixx="0.00047" ixy="0" ixz="0"
+        iyy="0.00032" iyz="0"
+        izz="0.00068" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ansa_digital_twin/meshes/jetson_enclosure.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.792 0.819 0.933 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.02" rpy="0 0 0" />
+      <geometry>
+        <box size="0.08 0.08 0.05" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="jetsonenclosure" type="fixed">
+    <origin xyz="-0.0022 0.0 0.1" rpy="0 0 0" />
+    <parent link="Drone_link" />
+    <child link="jetson_enclosure" />
+  </joint>
+
+  <!-- PROPELLERS (Symmetric Positions: x=±0.121, y=±0.121) -->
+  
+  <!-- Left Front Propeller (CCW) -->
+  <link name="leftfront_prop">
+    <inertial>
+      <origin xyz="0 0 -0.005" rpy="0 0 0" />
+      <mass value="0.0016" />
+      <inertia ixx="5.56e-07" ixy="0" ixz="0" iyy="5.56e-07" iyz="0" izz="1.09e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ansa_digital_twin/meshes/leftfront_prop.STL" />
+      </geometry>
+      <material name=""><color rgba="1 1 1 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.005" rpy="0 0 0" />
+      <geometry><cylinder radius="0.09" length="0.01" /></geometry>
+    </collision>
+  </link>
+  <joint name="leftfrontprop" type="continuous">
+    <origin xyz="0.121 0.121 0.05876" rpy="0 0 0" />
+    <parent link="Drone_link" />
+    <child link="leftfront_prop" />
+    <axis xyz="0 0 1" />
+    <limit effort="1" velocity="1000" />
+    <dynamics damping="0.001" friction="0.01" />
+  </joint>
+
+  <!-- Right Front Propeller (CW) -->
+  <link name="rightfront_prop">
+    <inertial>
+      <origin xyz="0 0 -0.005" rpy="0 0 0" />
+      <mass value="0.0016" />
+      <inertia ixx="5.56e-07" ixy="0" ixz="0" iyy="5.56e-07" iyz="0" izz="1.09e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ansa_digital_twin/meshes/rightfront_prop.STL" />
+      </geometry>
+      <material name=""><color rgba="1 1 1 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.005" rpy="0 0 0" />
+      <geometry><cylinder radius="0.09" length="0.01" /></geometry>
+    </collision>
+  </link>
+  <joint name="rightfrontprop" type="continuous">
+    <origin xyz="0.121 -0.121 0.05876" rpy="0 0 0" />
+    <parent link="Drone_link" />
+    <child link="rightfront_prop" />
+    <axis xyz="0 0 1" />
+    <limit effort="1" velocity="1000" />
+    <dynamics damping="0.001" friction="0.01" />
+  </joint>
+
+  <!-- Left Back Propeller (CW) -->
+  <link name="leftback_prop">
+    <inertial>
+      <origin xyz="0 0 -0.005" rpy="0 0 0" />
+      <mass value="0.0016" />
+      <inertia ixx="5.56e-07" ixy="0" ixz="0" iyy="5.56e-07" iyz="0" izz="1.09e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ansa_digital_twin/meshes/leftback_prop.STL" />
+      </geometry>
+      <material name=""><color rgba="1 1 1 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.005" rpy="0 0 0" />
+      <geometry><cylinder radius="0.09" length="0.01" /></geometry>
+    </collision>
+  </link>
+  <joint name="leftbackprop" type="continuous">
+    <origin xyz="-0.121 0.121 0.05876" rpy="0 0 0" />
+    <parent link="Drone_link" />
+    <child link="leftback_prop" />
+    <axis xyz="0 0 1" />
+    <limit effort="1" velocity="1000" />
+    <dynamics damping="0.001" friction="0.01" />
+  </joint>
+
+  <!-- Right Back Propeller (CCW) -->
+  <link name="rightback_prop">
+    <inertial>
+      <origin xyz="0 0 -0.005" rpy="0 0 0" />
+      <mass value="0.0016" />
+      <inertia ixx="5.56e-07" ixy="0" ixz="0" iyy="5.56e-07" iyz="0" izz="1.09e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://ansa_digital_twin/meshes/rightback_prop.STL" />
+      </geometry>
+      <material name=""><color rgba="1 1 1 1" /></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.005" rpy="0 0 0" />
+      <geometry><cylinder radius="0.09" length="0.01" /></geometry>
+    </collision>
+  </link>
+  <joint name="rightbackprop" type="continuous">
+    <origin xyz="-0.121 -0.121 0.05876" rpy="0 0 0" />
+    <parent link="Drone_link" />
+    <child link="rightback_prop" />
+    <axis xyz="0 0 1" />
+    <limit effort="1" velocity="1000" />
+    <dynamics damping="0.001" friction="0.01" />
+  </joint>
+
+  <!-- ============ GAZEBO PLUGINS ============ -->
+
+  <!-- IMU Sensor -->
+  <gazebo>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu" />
+  </gazebo>
+  <gazebo reference="Drone_link">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>1</always_on>
+      <update_rate>100</update_rate>
+      <topic>imu/data</topic>
+    </sensor>
+  </gazebo>
+
+  <!-- Motor Models -->
+  <gazebo>
+    <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>ansa_drone</robotNamespace>
+      <jointName>leftfrontprop</jointName>
+      <linkName>leftfront_prop</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1200</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>0</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>ansa_drone</robotNamespace>
+      <jointName>rightfrontprop</jointName>
+      <linkName>rightfront_prop</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1200</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>1</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>ansa_drone</robotNamespace>
+      <jointName>leftbackprop</jointName>
+      <linkName>leftback_prop</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1200</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>2</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
+      <robotNamespace>ansa_drone</robotNamespace>
+      <jointName>rightbackprop</jointName>
+      <linkName>rightback_prop</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1200</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.016</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>3</motorNumber>
+      <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+  </gazebo>
+
+  <!-- High-gain Multicopter Velocity Controller -->
+  <gazebo>
+    <plugin filename="gz-sim-multicopter-control-system" name="gz::sim::systems::MulticopterVelocityControl">
+      <robotNamespace>ansa_drone</robotNamespace>
+      <commandSubTopic>cmd_vel</commandSubTopic>
+      <enableSubTopic>enable</enableSubTopic>
+      <comLinkName>Drone_link</comLinkName>
+      <velocityGain>5.0 5.0 6.0</velocityGain>
+      <attitudeGain>8.0 8.0 3.0</attitudeGain>
+      <angularRateGain>1.5 1.5 0.8</angularRateGain>
+      <maximumLinearAcceleration>8.0 8.0 5.0</maximumLinearAcceleration>
+      <rotorConfiguration>
+        <rotor>
+          <jointName>leftfrontprop</jointName>
+          <forceConstant>8.54858e-06</forceConstant>
+          <momentConstant>0.016</momentConstant>
+          <direction>1</direction>
+        </rotor>
+        <rotor>
+          <jointName>rightfrontprop</jointName>
+          <forceConstant>8.54858e-06</forceConstant>
+          <momentConstant>0.016</momentConstant>
+          <direction>-1</direction>
+        </rotor>
+        <rotor>
+          <jointName>leftbackprop</jointName>
+          <forceConstant>8.54858e-06</forceConstant>
+          <momentConstant>0.016</momentConstant>
+          <direction>-1</direction>
+        </rotor>
+        <rotor>
+          <jointName>rightbackprop</jointName>
+          <forceConstant>8.54858e-06</forceConstant>
+          <momentConstant>0.016</momentConstant>
+          <direction>1</direction>
+        </rotor>
+      </rotorConfiguration>
+    </plugin>
+  </gazebo>
+
+  <!-- Odometry Publisher -->
+  <gazebo>
+    <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+      <odom_frame>ansa_drone/odom</odom_frame>
+      <robot_base_frame>Drone_link</robot_base_frame>
+      <odom_topic>/model/ansa_drone/odometry</odom_topic>
+      <odom_publish_frequency>30</odom_publish_frequency>
+      <dimensions>3</dimensions>
+    </plugin>
+  </gazebo>
+
+  <!-- Battery Plugin -->
+  <gazebo>
+    <plugin filename="gz-sim-linearbatteryplugin-system" name="gz::sim::systems::LinearBatteryPlugin">
+      <battery_name>ansa_drone_battery</battery_name>
+      <voltage>12.6</voltage>
+      <open_circuit_voltage_constant_coef>12.694</open_circuit_voltage_constant_coef>
+      <open_circuit_voltage_linear_coef>-3.1424</open_circuit_voltage_linear_coef>
+      <initial_charge>3.0</initial_charge>
+      <capacity>3.0</capacity>
+      <resistance>0.061523</resistance>
+      <smooth_current_tau>1.9499</smooth_current_tau>
+      <power_load>6.6</power_load>
+      <topic>/battery_state</topic>
+    </plugin>
+  </gazebo>
+
+</robot>
