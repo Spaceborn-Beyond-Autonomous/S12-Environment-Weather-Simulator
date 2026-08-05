@@ -1,101 +1,115 @@
 <?xml version="1.0"?>
 <sdf version="1.9">
+
   <world name="default">
 
-    <!-- Physics -->
+    <!-- ================= Physics ================= -->
+
     <physics name="default_physics" type="dart">
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1.0</real_time_factor>
     </physics>
 
-    <!-- Plugins -->
-    <plugin filename="gz-sim-physics-system"
-            name="gz::sim::systems::Physics"/>
-    <plugin filename="gz-sim-sensors-system"
-            name="gz::sim::systems::Sensors">
+    <!-- ================= Gazebo Harmonic System Plugins ================= -->
+
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics"/>
+
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands"/>
+
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster"/>
+
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
       <render_engine>ogre2</render_engine>
     </plugin>
-    <plugin filename="gz-sim-imu-system"
-            name="gz::sim::systems::Imu"/>
-    <plugin filename="gz-sim-navsat-system"
-            name="gz::sim::systems::NavSat"/>
-    <plugin filename="gz-sim-scene-broadcaster-system"
-            name="gz::sim::systems::SceneBroadcaster"/>
-    <plugin filename="gz-sim-user-commands-system"
-            name="gz::sim::systems::UserCommands"/>
 
-    <!-- Ground plane -->
+    <plugin
+      filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu"/>
+
+    <plugin
+      filename="gz-sim-navsat-system"
+      name="gz::sim::systems::NavSat"/>
+
+    <!-- ================= Ground Plane ================= -->
+
     <model name="ground_plane">
+
       <static>true</static>
-      <link name="link">
-        <collision name="col">
-          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+
+      <link name="ground_link">
+
+        <collision name="collision">
+
+          <geometry>
+
+            <plane>
+
+              <normal>0 0 1</normal>
+
+              <size>100 100</size>
+
+            </plane>
+
+          </geometry>
+
         </collision>
-        <visual name="vis">
-          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
-          <material><ambient>0.8 0.8 0.8 1</ambient></material>
-        </visual>
-      </link>
-    </model>
 
+        <visual name="visual">
 
+          <geometry>
 
-    <!-- Essential System Plugins (Now correctly inside the world block) -->
-    <plugin
-        filename="gz-sim-physics-system"
-        name="gz::sim::systems::Physics"/>
+            <plane>
 
-    <plugin
-        filename="gz-sim-user-commands-system"
-        name="gz::sim::systems::UserCommands"/>
+              <normal>0 0 1</normal>
 
-    <plugin
-        filename="gz-sim-scene-broadcaster-system"
-        name="gz::sim::systems::SceneBroadcaster"/>
+              <size>100 100</size>
 
-    <plugin
-        filename="gz-sim-sensors-system"
-        name="gz::sim::systems::Sensors">
-      <render_engine>ogre2</render_engine>
-    </plugin>
+            </plane>
 
-    <plugin
-        filename="gz-sim-particle-emitter-system"
-        name="gz::sim::systems::ParticleEmitter"/>
+          </geometry>
 
-    <!-- Rain Emitter Model -->
-    <!-- Snow Emitter Model -->
-    <model name="snow_generator">
-      <static>true</static>
-      <pose>0 0 12 0 0 0</pose>
-      <link name="snow_link">
-        <particle_emitter name="snow_emitter" type="box">
-          <size>20 20 20</size>
-          <rate>500</rate>
-          <duration>0</duration>
-          <emitting>true</emitting>
-          <particle_size>0.15 0.15 0.15</particle_size>
-          <lifetime>8</lifetime>
-          <min_velocity>-0.3 -0.3 -1.5</min_velocity>
-          <max_velocity>0.3 0.3 -0.8</max_velocity>
-          <scale_rate>0.05</scale_rate>
           <material>
-            <ambient>1 1 1 1</ambient>
-            <diffuse>1 1 1 1</diffuse>
-          </material>
-        </particle_emitter>
-      </link>
-    </model>
-    
 
-    <!-- Sun -->
-    <light name="sun" type="directional">
+            <ambient>0.8 0.8 0.8 1</ambient>
+
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+
+            <specular>0.1 0.1 0.1 1</specular>
+
+          </material>
+
+        </visual>
+
+      </link>
+
+    </model>
+
+    <!-- ================= Sun ================= -->
+
+    <light
+      name="sun"
+      type="directional">
+
       <cast_shadows>true</cast_shadows>
+
       <pose>0 0 10 0 0 0</pose>
+
       <diffuse>0.8 0.8 0.8 1</diffuse>
+
       <specular>0.2 0.2 0.2 1</specular>
+
       <direction>-0.5 0.1 -0.9</direction>
+
     </light>
 
   </world>
+
 </sdf>

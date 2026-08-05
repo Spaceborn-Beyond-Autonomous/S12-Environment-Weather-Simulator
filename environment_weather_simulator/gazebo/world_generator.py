@@ -1,686 +1,401 @@
 #!/usr/bin/env python3
 """
-world_generator.py
-
+===========================================================
 Environment Weather Simulator
------------------------------
+World Generator (Gazebo Harmonic)
 
-This module dynamically injects weather effects into an existing
-Gazebo SDF world (ansa_world.sdf).
+Author : Chetanya Barodiya & Team
+Description:
+    Generates a Gazebo Harmonic world by combining
+    base_world.sdf with a selected weather effect.
 
-Features
---------
-✓ Works directly with ansa_world.sdf
-✓ Reads weather snippets from:
-    rain_generator.txt
-    fog_generator.txt
-    snow_generator.txt
-    wind_generator.txt
-    dust_generator.txt
-    storm_generator.txt
-    thunder_generator.txt
-    clear_generator.txt
-
-✓ Removes any previous weather block
-✓ Inserts only one weather block
-✓ Safe for repeated execution
-✓ Compatible with:
-
-ros2 launch environment_weather_simulator weather.launch.py effect:=rain
+Supported Effects:
+    - clear
+    - rain
+    - snow
+    - fog
+    - dust
+    - storm
+===========================================================
 """
 
-from __future__ import annotations
-
-import shutil
+from pathlib import Path
 import argparse
 import sys
-from pathlib import Path
-from typing import Dict, Optional
+import shutil
 
 
 class WorldGenerator:
     """
-    Generates a temporary Gazebo world by injecting
-    weather snippets into ansa_world.sdf.
+    Generates Gazebo Harmonic worlds by injecting weather
+    effect models into the base world.
     """
 
-    WEATHER_BEGIN = "<!-- WEATHER_EFFECT_BEGIN -->"
-    WEATHER_END = "<!-- WEATHER_EFFECT_END -->"
+    SUPPORTED_EFFECTS = {
+        "clear",
+        "rain",
+        "snow",
+        "fog",
+        "dust",
+        "storm"
+    }
 
-    def __init__(
-        self,
-        world_file: str,
-        generator_directory: str,
-        output_directory: str,
-    ) -> None:
+    def __init__(self):
 
-        self.world_file = Path(world_file).expanduser().resolve()
+        # Current file directory
+        self.package_dir = Path(__file__).resolve().parent
 
-        self.generator_directory = (
-            Path(generator_directory)
-            .expanduser()
-            .resolve()
-        )
+        # gazebo/
+        self.gazebo_dir = self.package_dir
 
-        self.output_directory = (
-            Path(output_directory)
-            .expanduser()
-            .resolve()
-        )
+        # gazebo/worlds/
+        self.worlds_dir = self.gazebo_dir / "worlds"
 
-        self.output_directory.mkdir(
-            parents=True,
-            exist_ok=True,
-        )
+        # gazebo/effects/
+        self.effects_dir = self.gazebo_dir / "effects"
 
-        self.generated_world = (
-            self.output_directory /
-            self.world_file.name
-        )
+        # Base world
+        self.base_world = self.worlds_dir / "base_world.sdf"
 
-        self.weather_files: Dict[str, Path] = {
-            "clear":
-                self.generator_directory /
-                "clear_generator.txt",
+        # Generated world
+        self.generated_world = self.worlds_dir / "generated_world.sdf"
 
-            "rain":
-                self.generator_directory /
-                "rain_generator.txt",
+    # ----------------------------------------------------
+    # Validation
+    # ----------------------------------------------------
 
-            "fog":
-                self.generator_directory /
-                "fog_generator.txt",
-
-            "snow":
-                self.generator_directory /
-                "snow_generator.txt",
-
-            "wind":
-                self.generator_directory /
-                "wind_generator.txt",
-
-            "dust":
-                self.generator_directory /
-                "dust_generator.txt",
-
-            "storm":
-                self.generator_directory /
-                "storm_generator.txt",
-
-            "thunder":
-                self.generator_directory /
-                "thunder_generator.txt",
-        }
-
-    # -------------------------------------------------------------
-    # Utility Functions
-    # -------------------------------------------------------------
-
-    def validate(self) -> None:
-        """
-        Ensure required files exist.
-        """
-
-        if not self.world_file.exists():
-            raise FileNotFoundError(
-                f"World file not found:\n{self.world_file}"
-            )
-
-        if not self.generator_directory.exists():
-            raise FileNotFoundError(
-                f"Generator directory missing:\n"
-                f"{self.generator_directory}"
-            )
-
-        # Individual weather files are validated
-        # only when the requested effect is loaded.
-
-    def list_effects(self) -> list[str]:
-        return sorted(self.weather_files.keys())
-
-    def generator_path(
-        self,
-        effect: str,
-    ) -> Path:
+    def validate_effect(self, effect: str):
 
         effect = effect.lower()
 
-        if effect not in self.weather_files:
-
-            raise ValueError(
-                f"Unknown weather effect '{effect}'.\n"
-                f"Available: {', '.join(self.list_effects())}"
-            )
-
-        return self.weather_files[effect]
-
-    def load_world(self) -> str:
-        return self.world_file.read_text(
-            encoding="utf-8"
-        )
-
-    def save_world(
-        self,
-        content: str,
-    ) -> Path:
-
-        self.generated_world.write_text(
-            content,
-            encoding="utf-8",
-        )
-
-        return self.generated_world
-
-    def load_weather(
-        self,
-        effect: str,
-    ) -> str:
-
-        weather_file = self.generator_path(effect)
-
-        if not weather_file.exists():
-            raise FileNotFoundError(
-                f"Weather generator not found:\n{weather_file}"
-            )
-
-        return weather_file.read_text(
-            encoding="utf-8"
-        )
-
-    def backup_original(self) -> Path:
-        """
-        Backup ansa_world.sdf once.
-        """
-
-        backup = (
-            self.output_directory /
-            (self.world_file.stem + "_backup.sdf")
-        )
-
-        if not backup.exists():
-            shutil.copy2(
-                self.world_file,
-                backup,
-            )
-
-        return backup
-
-    # -------------------------------------------------------------
-    # Weather Block Handling
-    # -------------------------------------------------------------
-
-    def _weather_wrapper(
-        self,
-        weather_text: str,
-    ) -> str:
-        """
-        Wrap a weather snippet so it can be safely removed
-        on the next execution.
-        """
-
-        weather_text = weather_text.strip()
-
-        return (
-            "\n"
-            f"{self.WEATHER_BEGIN}\n"
-            f"{weather_text}\n"
-            f"{self.WEATHER_END}\n"
-        )
-
-    def remove_previous_weather(
-        self,
-        world_text: str,
-    ) -> str:
-        """
-        Remove an existing injected weather block if present.
-
-        Safe to call multiple times.
-        """
-
-        begin = world_text.find(self.WEATHER_BEGIN)
-
-        if begin == -1:
-            return world_text
-
-        end = world_text.find(
-            self.WEATHER_END,
-            begin,
-        )
-
-        if end == -1:
-            return world_text
-
-        end += len(self.WEATHER_END)
-
-        while (
-            end < len(world_text)
-            and world_text[end] in ("\n", "\r")
-        ):
-            end += 1
-
-        return (
-            world_text[:begin]
-            + world_text[end:]
-        )
-
-    def _find_world_end(
-        self,
-        world_text: str,
-    ) -> int:
-        """
-        Find the closing </world> tag.
-
-        The weather block is inserted immediately before it.
-        """
-
-        marker = "</world>"
-
-        position = world_text.rfind(marker)
-
-        if position == -1:
-            raise RuntimeError(
-                "Closing </world> tag not found "
-                "inside ansa_world.sdf"
-            )
-
-        return position
-
-    def insert_weather(
-        self,
-        world_text: str,
-        weather_text: str,
-    ) -> str:
-        """
-        Remove any existing weather block and insert
-        the requested weather effect.
-        """
-
-        cleaned_world = self.remove_previous_weather(
-            world_text
-        )
-
-        insert_position = self._find_world_end(
-            cleaned_world
-        )
-
-        wrapped_weather = self._weather_wrapper(
-            weather_text
-        )
-
-        return (
-            cleaned_world[:insert_position]
-            + wrapped_weather
-            + cleaned_world[insert_position:]
-        )
-
-    def build_world_text(
-        self,
-        effect: str,
-    ) -> str:
-        """
-        Generate the final world text for a weather effect.
-        """
-
-        world_text = self.load_world()
-
-        weather_text = self.load_weather(
-            effect
-        )
-
-        return self.insert_weather(
-            world_text,
-            weather_text,
-        )
-
-    def world_exists(self) -> bool:
-        """
-        Check whether the generated world already exists.
-        """
-
-        return self.generated_world.exists()
-
-    def remove_generated_world(self) -> None:
-        """
-        Delete the generated world if present.
-        """
-
-        if self.generated_world.exists():
-            self.generated_world.unlink()
-
-    # -------------------------------------------------------------
-    # World Generation
-    # -------------------------------------------------------------
-
-    def generate(
-        self,
-        effect: str,
-    ) -> Path:
-        """
-        Generate a new world containing the requested
-        weather effect.
-
-        Parameters
-        ----------
-        effect : str
-            clear, rain, fog, snow, wind,
-            dust, storm, thunder
-
-        Returns
-        -------
-        Path
-            Path to the generated world.
-        """
-
-        effect = effect.lower().strip()
-
-        self.validate()
-
-        self.backup_original()
-
-        world_text = self.build_world_text(effect)
-
-        return self.save_world(world_text)
-
-    def regenerate(
-        self,
-        effect: str,
-    ) -> Path:
-        """
-        Regenerate the world from the original source.
-
-        Existing generated worlds are removed first to
-        ensure there are never multiple weather blocks.
-        """
-
-        if self.generated_world.exists():
-            self.generated_world.unlink()
-
-        return self.generate(effect)
-
-    def switch_effect(
-        self,
-        effect: str,
-    ) -> Path:
-        """
-        Switch weather effects.
-
-        Equivalent to regenerating the world.
-        """
-
-        return self.regenerate(effect)
-
-    def get_generated_world(self) -> Path:
-        """
-        Return the generated world path.
-        """
-
-        return self.generated_world
-
-    def effect_exists(
-        self,
-        effect: str,
-    ) -> bool:
-        """
-        Check whether a weather effect generator exists.
-        """
-
-        return (
-            effect.lower().strip()
-            in self.weather_files
-        )
-
-    def available_effects(self) -> tuple[str, ...]:
-        """
-        Return all supported weather effects.
-        """
-
-        return tuple(
-            sorted(self.weather_files.keys())
-        )
-
-    def restore_original(self) -> Path:
-        """
-        Restore the original ansa_world.sdf from the
-        backup if one exists.
-        """
-
-        backup = (
-            self.output_directory
-            / (self.world_file.stem + "_backup.sdf")
-        )
-
-        if not backup.exists():
-            raise FileNotFoundError(
-                "Backup world not found."
-            )
-
-        shutil.copy2(
-            backup,
-            self.generated_world,
-        )
-
-        return self.generated_world
-
-    def clean(self) -> None:
-        """
-        Remove generated files created by this module.
-        """
-
-        if self.generated_world.exists():
-            self.generated_world.unlink()
-
-    def __str__(self) -> str:
-        return (
-            f"WorldGenerator("
-            f"world='{self.world_file}', "
-            f"generated='{self.generated_world}')"
-        )
-
-    def __repr__(self) -> str:
-        return self.__str__()
-
-    # -------------------------------------------------------------
-    # Launch-Compatible API
-    # -------------------------------------------------------------
-
-    def prepare_world(
-        self,
-        effect: str = "clear",
-    ) -> str:
-        """
-        Generate the requested weather world and return the
-        absolute path to the generated SDF.
-
-        This method is intended to be called from
-        weather.launch.py.
-
-        Example:
-            generator.prepare_world("rain")
-        """
-
-        generated = self.generate(effect)
-
-        return str(generated.resolve())
-
-    def prepare_from_launch_argument(
-        self,
-        effect: Optional[str],
-    ) -> str:
-        """
-        Accept the launch argument 'effect'.
-
-        Example:
-            effect:=rain
-            effect:=fog
-            effect:=snow
-
-        If the argument is empty or None, 'clear' is used.
-        """
-
-        if effect is None:
-            effect = "clear"
-
-        effect = str(effect).strip().lower()
-
-        if effect == "":
-            effect = "clear"
-
-        if not self.effect_exists(effect):
+        if effect not in self.SUPPORTED_EFFECTS:
             raise ValueError(
                 f"Unsupported weather effect '{effect}'.\n"
                 f"Supported effects: "
-                f"{', '.join(self.available_effects())}"
+                f"{', '.join(sorted(self.SUPPORTED_EFFECTS))}"
             )
 
-        return self.prepare_world(effect)
+        return effect
 
-    def create_world(
+    # ----------------------------------------------------
+    # Read File
+    # ----------------------------------------------------
+
+    @staticmethod
+    def read_file(file_path: Path) -> str:
+
+        if not file_path.exists():
+            raise FileNotFoundError(
+                f"Missing file:\n{file_path}"
+            )
+
+        return file_path.read_text(
+            encoding="utf-8"
+        )
+
+    # ----------------------------------------------------
+    # Write File
+    # ----------------------------------------------------
+
+    @staticmethod
+    def write_file(file_path: Path, content: str):
+
+        file_path.parent.mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
+        file_path.write_text(
+            content,
+            encoding="utf-8"
+        )
+
+    # ----------------------------------------------------
+    # Read Effect
+    # ----------------------------------------------------
+
+    def load_effect(self, effect: str) -> str:
+
+        effect = self.validate_effect(effect)
+
+        # Clear weather uses only base world
+        if effect == "clear":
+            return ""
+
+        effect_file = self.effects_dir / f"{effect}.sdf"
+
+        return self.read_file(effect_file)
+
+    # ----------------------------------------------------
+    # Backup Generated World
+    # ----------------------------------------------------
+
+    def backup_generated_world(self):
+
+        if not self.generated_world.exists():
+            return
+
+        backup = self.generated_world.with_suffix(".bak")
+
+        shutil.copy2(
+            self.generated_world,
+            backup
+        )
+
+    # ----------------------------------------------------
+    # Utility
+    # ----------------------------------------------------
+
+    @staticmethod
+    def insert_before_world_end(
+        world_text: str,
+        effect_text: str
+    ) -> str:
+
+        tag = "</world>"
+
+        if tag not in world_text:
+            raise RuntimeError(
+                "Invalid base_world.sdf "
+                "('</world>' tag not found)"
+            )
+
+        return world_text.replace(
+            tag,
+            "\n"
+            + effect_text
+            + "\n\n"
+            + tag
+        )
+
+
+    # ----------------------------------------------------
+    # Particle Emitter Plugin
+    # ----------------------------------------------------
+
+    @staticmethod
+    def particle_plugin() -> str:
+
+        return """
+    <plugin
+      filename="gz-sim-particle-emitter-system"
+      name="gz::sim::systems::ParticleEmitter"/>
+"""
+
+    # ----------------------------------------------------
+    # Insert Particle Plugin
+    # ----------------------------------------------------
+
+    def insert_particle_plugin(
         self,
-        effect: str,
-    ) -> Path:
-        """
-        Convenience wrapper.
-        """
+        world_text: str
+    ) -> str:
 
-        return self.generate(effect)
+        plugin_name = "gz::sim::systems::ParticleEmitter"
 
-    def update_world(
+        # Already present
+        if plugin_name in world_text:
+            return world_text
+
+        insert_after = (
+            '<plugin\n'
+            '      filename="gz-sim-navsat-system"\n'
+            '      name="gz::sim::systems::NavSat"/>'
+        )
+
+        if insert_after in world_text:
+
+            return world_text.replace(
+                insert_after,
+                insert_after +
+                "\n" +
+                self.particle_plugin()
+            )
+
+        # Fallback
+        return world_text.replace(
+            "</world>",
+            self.particle_plugin() +
+            "\n</world>"
+        )
+
+    # ----------------------------------------------------
+    # Generate World
+    # ----------------------------------------------------
+
+    def generate_world(
         self,
-        effect: str,
+        effect: str
     ) -> Path:
-        """
-        Replace any existing injected weather block with
-        the newly requested effect.
-        """
 
-        return self.switch_effect(effect)
+        effect = self.validate_effect(effect)
 
-    def world_path(self) -> str:
-        """
-        Absolute path to the generated world.
-        """
+        print("=" * 60)
+        print(" Environment Weather Simulator")
+        print("=" * 60)
+        print(f"Weather : {effect}")
 
-        return str(self.generated_world.resolve())
+        base_world_text = self.read_file(
+            self.base_world
+        )
 
-    def source_world_path(self) -> str:
-        """
-        Absolute path to the original ansa_world.sdf.
-        """
+        # ----------------------------------------
+        # Clear Weather
+        # ----------------------------------------
 
-        return str(self.world_file.resolve())
+        if effect == "clear":
 
-    def summary(self) -> Dict[str, Any]:
-        """
-        Useful for debugging or logging.
-        """
+            self.write_file(
+                self.generated_world,
+                base_world_text
+            )
 
-        return {
-            "source_world": self.source_world_path(),
-            "generated_world": self.world_path(),
-            "generator_directory": str(self.generator_directory),
-            "available_effects": list(self.available_effects()),
-        }   
+            print("Clear weather selected.")
+            print("No weather model inserted.")
+            print(
+                f"Generated:\n{self.generated_world}"
+            )
 
-# -------------------------------------------------------------
-# Command Line Interface
-# -------------------------------------------------------------
+            return self.generated_world
 
-    
+        # ----------------------------------------
+        # Other Weather Effects
+        # ----------------------------------------
+
+        effect_text = self.load_effect(
+            effect
+        )
+
+        world_text = self.insert_particle_plugin(
+            base_world_text
+        )
+
+        world_text = self.insert_before_world_end(
+            world_text,
+            effect_text
+        )
+
+        self.backup_generated_world()
+
+        self.write_file(
+            self.generated_world,
+            world_text
+        )
+
+        print(
+            f"Inserted weather effect: {effect}"
+        )
+
+        print(
+            f"Generated:\n{self.generated_world}"
+        )
+
+        return self.generated_world
+
+    # ----------------------------------------------------
+    # Preview
+    # ----------------------------------------------------
+
+    def preview(
+        self,
+        effect: str
+    ):
+
+        world = self.generate_world(effect)
+
+        print("\nGeneration completed successfully.")
+
+        print(f"\nOutput:\n{world}")
 
 
-def build_argument_parser() -> argparse.ArgumentParser:
-    """
-    Create the command-line argument parser.
-    """
+
+# ----------------------------------------------------
+# Command Line
+# ----------------------------------------------------
+
+def build_argument_parser():
 
     parser = argparse.ArgumentParser(
-        description="Generate a weather-enabled Gazebo world."
-    )
-
-    parser.add_argument(
-        "--world",
-        required=True,
-        help="Path to ansa_world.sdf",
-    )
-
-    parser.add_argument(
-        "--generators",
-        required=True,
-        help="Directory containing *_generator.txt files",
-    )
-
-    parser.add_argument(
-        "--output",
-        required=True,
-        help="Directory where the generated world will be written",
+        description="Gazebo Harmonic World Generator"
     )
 
     parser.add_argument(
         "--effect",
+        "-e",
+        type=str,
         default="clear",
-        choices=[
-            "clear",
-            "rain",
-            "fog",
-            "snow",
-            "wind",
-            "dust",
-            "storm",
-            "thunder",
-        ],
-        help="Weather effect to inject",
+        choices=sorted(WorldGenerator.SUPPORTED_EFFECTS),
+        help="Weather effect to generate"
     )
 
     return parser
 
 
-def main() -> int:
-    """
-    CLI entry point.
+# ----------------------------------------------------
+# Main
+# ----------------------------------------------------
 
-    Example:
-
-    python3 world_generator.py \
-        --world ansa_world.sdf \
-        --generators weather_generators \
-        --output generated \
-        --effect rain
-    """
+def main():
 
     parser = build_argument_parser()
+
     args = parser.parse_args()
 
     try:
 
-        generator = WorldGenerator(
-            world_file=args.world,
-            generator_directory=args.generators,
-            output_directory=args.output,
-        )
+        generator = WorldGenerator()
 
-        generated_world = generator.prepare_from_launch_argument(
+        world_path = generator.generate_world(
             args.effect
         )
 
-        print("=" * 60)
-        print("Environment Weather Simulator")
-        print("=" * 60)
-        print(f"Effect           : {args.effect}")
-        print(f"Source World     : {generator.source_world_path()}")
-        print(f"Generated World  : {generated_world}")
-        print("=" * 60)
+        print("\n----------------------------------------")
+        print(" World generation successful")
+        print("----------------------------------------")
+        print(f"Effect          : {args.effect}")
+        print(f"Generated World : {world_path}")
+        print("----------------------------------------")
 
         return 0
 
-    except Exception as exc:
+    except KeyboardInterrupt:
 
-        print(
-            f"[WorldGenerator] ERROR: {exc}",
-            file=sys.stderr,
-        )
+        print("\nGeneration cancelled.")
+
+        return 130
+
+    except FileNotFoundError as e:
+
+        print("\nERROR")
+        print("----------------------------------------")
+        print(e)
+        print("----------------------------------------")
+
+        return 1
+
+    except ValueError as e:
+
+        print("\nERROR")
+        print("----------------------------------------")
+        print(e)
+        print("----------------------------------------")
+
+        return 1
+
+    except Exception as e:
+
+        print("\nUnexpected Error")
+        print("----------------------------------------")
+        print(type(e).__name__)
+        print(e)
+        print("----------------------------------------")
 
         return 1
 
 
+# ----------------------------------------------------
+# Entry Point
+# ----------------------------------------------------
+
 if __name__ == "__main__":
-    raise SystemExit(main())
+    sys.exit(main())

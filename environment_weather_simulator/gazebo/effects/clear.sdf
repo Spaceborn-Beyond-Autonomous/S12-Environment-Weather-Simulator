@@ -1,0 +1,9 @@
+<!--
+    Clear Weather
+    -------------
+    This file intentionally contains no models.
+
+    When effect=clear is selected,
+    world_generator.py will only use base_world.sdf
+    without inserting any weather effect.
+-->
