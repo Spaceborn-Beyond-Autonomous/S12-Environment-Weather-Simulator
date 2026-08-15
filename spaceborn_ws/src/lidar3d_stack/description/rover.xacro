@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+<robot name="bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+    <link name="base_footprint"/>
+
+    <link name="base_link">
+        <inertial>
+            <!-- ⚠️ Update these values once rover mass properties PDF is readable -->
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="15.0"/>
+            <!-- Estimated for a rover of this size -->
+            <inertia ixx="0.5"    ixy="0.0"  ixz="0.0"
+                     iyy="0.8"    iyz="0.0"
+                     izz="0.8"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+            <!-- rpy 1.5708 rotates mesh to correct orientation -->
+            <geometry>
+                <mesh filename="package://lidar3d_stack/meshes/rover.stl"
+                      scale="0.002 0.002 0.002"/>
+            </geometry>
+            <material name="grey">
+                <color rgba="0.75 0.75 0.75 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <!-- Approximate bounding box of rover -->
+                <box size="0.45 0.45 0.15"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="base_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child  link="base_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="lidar_link">
+        <inertial>
+            <origin xyz="0.01505 0.01275 -0.01744" rpy="0 0 0"/>
+            <mass value="0.02526"/>
+            <inertia ixx="0.000004983"  ixy="-0.000000061"  ixz="0.0000000017"
+                     iyy="0.000004054"  iyz="-0.000000061"
+                     izz="0.000004671"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+            <geometry>
+                <mesh filename="package://lidar3d_stack/meshes/rover_lidar.stl"
+                      scale="0.002 0.002 0.002"/>
+                <!-- scale 0.001 converts mm to meters -->
+            </geometry>
+            <material name="black">
+                <color rgba="0.1 0.1 0.1 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.04" length="0.06"/>
+            </geometry>
+        </collision>
+    </link>
+
+    
+    <joint name="lidar_joint" type="fixed">
+        <parent link="base_link"/>
+        <child  link="lidar_link"/>
+        <origin xyz="0 0 0.02 " rpy="0 0 0"/>
+    </joint>
+
+    <gazebo reference="base_link">
+        <static>true</static>
+        <self_collide>false</self_collide>
+    </gazebo>
+
+</robot>

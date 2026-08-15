@@ -1,0 +1,592 @@
+<sdf version='1.7'>
+  <model name='Drone_Full'>
+    <link name='Drone_link'>
+      <inertial>
+        <pose>-0.00335 0.000698 0.032846 0 -0 0</pose>
+        <mass>0.945531</mass>
+        <inertia>
+          <ixx>0.00291777</ixx>
+          <ixy>-1.25475e-07</ixy>
+          <ixz>0.000141094</ixz>
+          <iyy>0.00346918</iyy>
+          <iyz>6.46213e-06</iyz>
+          <izz>0.0044414</izz>
+        </inertia>
+      </inertial>
+      <collision name='Drone_link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/Drone_link.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='Drone_link_fixed_joint_lump__jetson_enclosure_collision_1'>
+        <pose>-0.002265 3.9e-05 0.1 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/jetson_enclosure.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='Drone_link_fixed_joint_lump__lidar_link_collision_2'>
+        <pose>0.016903 0.000541 -0.0075 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/lidar_link.STL</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='Drone_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/Drone_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='Drone_link_fixed_joint_lump__camera_link_visual_1'>
+        <pose>0.15 0 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.03 0.03 0.03</size>
+          </box>
+        </geometry>
+      </visual>
+      <visual name='Drone_link_fixed_joint_lump__jetson_enclosure_visual_2'>
+        <pose>-0.002265 3.9e-05 0.1 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/jetson_enclosure.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='Drone_link_fixed_joint_lump__lidar_link_visual_3'>
+        <pose>0.016903 0.000541 -0.0075 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/lidar_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <sensor name='camera_sensor' type='camera'>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>1</visualize>
+        <camera>
+          <horizontal_fov>1.047</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>50</far>
+          </clip>
+        </camera>
+        <plugin name='camera_plugin' filename='libgazebo_ros_camera.so'>
+          <frame_name>camera_link</frame_name>
+        </plugin>
+        <pose>0.15 0 0 0 -0 0</pose>
+      </sensor>
+      <sensor name='lidar_sensor' type='ray'>
+        <visualize>1</visualize>
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1024</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14159</min_angle>
+              <max_angle>3.14159</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>16</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.261799</min_angle>
+              <max_angle>0.261799</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.1</min>
+            <max>30</max>
+            <resolution>0.01</resolution>
+          </range>
+        </ray>
+        <plugin name='gazebo_ros_laser' filename='libgazebo_ros_ray_sensor.so'>
+          <ros>
+            <remapping>~/out:=points</remapping>
+          </ros>
+          <output_type>sensor_msgs/PointCloud2</output_type>
+          <frame_name>lidar_link</frame_name>
+        </plugin>
+        <pose>0.016903 0.000541 -0.0075 0 -0 0</pose>
+      </sensor>
+
+      <sensor name='gps' type='gps'>
+        <pose>0 0 0 0 0 0</pose>
+
+       <plugin name='gps_plugin'
+                filename='libgazebo_gps_plugin.so'>
+        <robotNamespace/>
+
+        <gpsNoise>1</gpsNoise>
+
+        <gpsXYRandomWalk>2.0</gpsXYRandomWalk>
+        <gpsZRandomWalk>4.0</gpsZRandomWalk>
+
+        <gpsXYNoiseDensity>0.0002</gpsXYNoiseDensity>
+        <gpsZNoiseDensity>0.0004</gpsZNoiseDensity>
+
+        <gpsVXYNoiseDensity>0.2</gpsVXYNoiseDensity>
+        <gpsVZNoiseDensity>0.4</gpsVZNoiseDensity>
+       </plugin>
+      </sensor>
+
+    </link>
+    <joint name='leftbackprop' type='revolute'>
+      <pose relative_to='Drone_link'>-0.12235 0.12103 0.058762 0 -0 0</pose>
+      <parent>Drone_link</parent>
+      <child>leftback_prop</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <effort>1</effort>
+          <velocity>100</velocity>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.01</damping>
+          <friction>0.1</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='leftback_prop'>
+      <pose relative_to='leftbackprop'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0 -0 -0.005179 0 -0 0</pose>
+        <mass>0.00159481</mass>
+        <inertia>
+          <ixx>5.56637e-07</ixx>
+          <ixy>1.27627e-12</ixy>
+          <ixz>5.73989e-14</ixz>
+          <iyy>5.56643e-07</iyy>
+          <iyz>-8.19007e-14</iyz>
+          <izz>1.09638e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='leftback_prop_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/leftback_prop.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='leftback_prop_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/leftback_prop.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='leftfrontprop' type='revolute'>
+      <pose relative_to='Drone_link'>0.12052 0.12184 0.058762 0 -0 0</pose>
+      <parent>Drone_link</parent>
+      <child>leftfront_prop</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <effort>1</effort>
+          <velocity>100</velocity>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.01</damping>
+          <friction>0.1</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='leftfront_prop'>
+      <pose relative_to='leftfrontprop'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0 0 -0.005179 0 -0 0</pose>
+        <mass>0.0015948</mass>
+        <inertia>
+          <ixx>5.5664e-07</ixx>
+          <ixy>9.02475e-13</ixy>
+          <ixz>1.0813e-13</ixz>
+          <iyy>5.56638e-07</iyy>
+          <iyz>1.45873e-14</iyz>
+          <izz>1.09638e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='leftfront_prop_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/leftfront_prop.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='leftfront_prop_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/leftfront_prop.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='rightbackprop' type='revolute'>
+      <pose relative_to='Drone_link'>-0.12155 -0.12184 0.058762 0 -0 0</pose>
+      <parent>Drone_link</parent>
+      <child>rightback_prop</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <effort>1</effort>
+          <velocity>100</velocity>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.01</damping>
+          <friction>0.1</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='rightback_prop'>
+      <pose relative_to='rightbackprop'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.005179 0 -0 0</pose>
+        <mass>0.0015948</mass>
+        <inertia>
+          <ixx>5.56638e-07</ixx>
+          <ixy>-5.60506e-13</ixy>
+          <ixz>-6.13608e-14</ixz>
+          <iyy>5.5664e-07</iyy>
+          <iyz>-2.77181e-14</iyz>
+          <izz>1.09638e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='rightback_prop_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/rightback_prop.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='rightback_prop_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/rightback_prop.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='rightfrontprop' type='revolute'>
+      <pose relative_to='Drone_link'>0.12132 -0.12103 0.058762 0 -0 0</pose>
+      <parent>Drone_link</parent>
+      <child>rightfront_prop</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <effort>1</effort>
+          <velocity>100</velocity>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.01</damping>
+          <friction>0.1</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='rightfront_prop'>
+      <pose relative_to='rightfrontprop'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0 -0 -0.005179 0 -0 0</pose>
+        <mass>0.00159482</mass>
+        <inertia>
+          <ixx>5.56639e-07</ixx>
+          <ixy>-8.88795e-13</ixy>
+          <ixz>-2.03842e-13</ixz>
+          <iyy>5.5664e-07</iyy>
+          <iyz>-2.3342e-13</iyz>
+          <izz>1.09638e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='rightfront_prop_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/rightfront_prop.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='rightfront_prop_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/abdul/spaceborn_ws/src/Drone_Full/meshes/rightfront_prop.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <plugin name='multirotor_base_plugin'
+          filename='libgazebo_multirotor_base_plugin.so'>
+       <robotNamespace>/drone</robotNamespace>
+       <linkName>Drone_link</linkName>
+       <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+
+    <plugin name='front_left_motor_model'
+          filename='libgazebo_motor_model.so'>
+       <robotNamespace>/drone</robotNamespace>
+       <jointName>leftfrontprop</jointName>
+       <linkName>leftfront_prop</linkName>
+       <turningDirection>cw</turningDirection>
+       <timeConstantUp>0.0125</timeConstantUp>
+       <timeConstantDown>0.025</timeConstantDown>
+       <maxRotVelocity>1100</maxRotVelocity>
+       <motorConstant>5.84e-06</motorConstant>
+       <momentConstant>0.06</momentConstant>
+       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+       <motorNumber>0</motorNumber>
+       <rotorDragCoefficient>0.000175</rotorDragCoefficient>
+       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+       <motorSpeedPubTopic>/motor_speed/0</motorSpeedPubTopic>
+       <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+
+    <plugin name='front_right_motor_model'
+          filename='libgazebo_motor_model.so'>
+       <robotNamespace>/drone</robotNamespace>
+       <jointName>rightfrontprop</jointName>
+       <linkName>rightfront_prop</linkName>
+       <turningDirection>ccw</turningDirection>
+       <timeConstantUp>0.0125</timeConstantUp>
+       <timeConstantDown>0.025</timeConstantDown>
+       <maxRotVelocity>1100</maxRotVelocity>
+       <motorConstant>5.84e-06</motorConstant>
+       <momentConstant>0.06</momentConstant>
+       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+       <motorNumber>1</motorNumber>
+       <rotorDragCoefficient>0.000175</rotorDragCoefficient>
+       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+       <motorSpeedPubTopic>/motor_speed/1</motorSpeedPubTopic>
+       <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+
+    <plugin name='back_left_motor_model'
+          filename='libgazebo_motor_model.so'>
+       <robotNamespace>/drone</robotNamespace>
+       <jointName>leftbackprop</jointName>
+       <linkName>leftback_prop</linkName>
+       <turningDirection>ccw</turningDirection>
+       <timeConstantUp>0.0125</timeConstantUp>
+       <timeConstantDown>0.025</timeConstantDown>
+       <maxRotVelocity>1100</maxRotVelocity>
+       <motorConstant>5.84e-06</motorConstant>
+       <momentConstant>0.06</momentConstant>
+       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+       <motorNumber>2</motorNumber>
+       <rotorDragCoefficient>0.000175</rotorDragCoefficient>
+       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+       <motorSpeedPubTopic>/motor_speed/2</motorSpeedPubTopic>
+       <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+
+    <plugin name='back_right_motor_model'
+          filename='libgazebo_motor_model.so'>
+       <robotNamespace>/drone</robotNamespace>
+       <jointName>rightbackprop</jointName>
+       <linkName>rightback_prop</linkName>
+       <turningDirection>cw</turningDirection>
+       <timeConstantUp>0.0125</timeConstantUp>
+       <timeConstantDown>0.025</timeConstantDown>
+       <maxRotVelocity>1100</maxRotVelocity>
+       <motorConstant>5.84e-06</motorConstant>
+       <momentConstant>0.06</momentConstant>
+       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+       <motorNumber>3</motorNumber>
+       <rotorDragCoefficient>0.000175</rotorDragCoefficient>
+       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+       <motorSpeedPubTopic>/motor_speed/3</motorSpeedPubTopic>
+       <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+    
+    
+    <plugin name='groundtruth_plugin'
+            filename='libgazebo_groundtruth_plugin.so'>
+       <robotNamespace>/drone</robotNamespace>
+    </plugin>
+
+    <plugin name='magnetometer_plugin'
+            filename='libgazebo_magnetometer_plugin.so'>
+       <robotNamespace>/drone</robotNamespace>
+       <pubRate>100</pubRate>
+       <noiseDensity>0.0004</noiseDensity>
+       <randomWalk>6.4e-06</randomWalk>
+       <biasCorrelationTime>600</biasCorrelationTime>
+       <magTopic>/mag</magTopic>
+    </plugin>
+
+    <plugin name='barometer_plugin'
+            filename='libgazebo_barometer_plugin.so'>
+       <robotNamespace>/drone</robotNamespace>
+       <pubRate>50</pubRate>
+       <baroTopic>/baro</baroTopic>
+       <baroDriftPaPerSec>0</baroDriftPaPerSec>
+    </plugin>
+   
+    
+    <plugin name='mavlink_interface'
+          filename='libgazebo_mavlink_interface.so'>
+
+       <robotNamespace>/drone</robotNamespace>
+
+       <imuSubTopic>/imu</imuSubTopic>
+
+       <mavlink_addr>INADDR_ANY</mavlink_addr>
+       <mavlink_tcp_port>4560</mavlink_tcp_port>
+       <mavlink_udp_port>14560</mavlink_udp_port>
+
+       <serialEnabled>0</serialEnabled>
+
+       <qgc_addr>INADDR_ANY</qgc_addr>
+       <qgc_udp_port>14550</qgc_udp_port>
+
+       <sdk_addr>INADDR_ANY</sdk_addr>
+       <sdk_udp_port>14540</sdk_udp_port>
+
+       <hil_mode>0</hil_mode>
+       <hil_state_level>0</hil_state_level>
+
+       <send_odometry>1</send_odometry>
+       <enable_lockstep>1</enable_lockstep>
+
+       <use_tcp>1</use_tcp>
+
+       <motorSpeedCommandPubTopic>
+        /gazebo/command/motor_speed
+       </motorSpeedCommandPubTopic>
+
+     <control_channels>
+
+       <channel name='rotor1'>
+         <input_index>0</input_index>
+         <input_offset>0</input_offset>
+         <input_scaling>1000</input_scaling>
+         <zero_position_disarmed>0</zero_position_disarmed>
+         <zero_position_armed>100</zero_position_armed>
+         <joint_control_type>velocity</joint_control_type>
+       </channel>
+
+       <channel name='rotor2'>
+         <input_index>1</input_index>
+         <input_offset>0</input_offset>
+         <input_scaling>1000</input_scaling>
+         <zero_position_disarmed>0</zero_position_disarmed>
+         <zero_position_armed>100</zero_position_armed>
+         <joint_control_type>velocity</joint_control_type>
+       </channel>
+
+       <channel name='rotor3'>
+         <input_index>2</input_index>
+         <input_offset>0</input_offset>
+         <input_scaling>1000</input_scaling>
+         <zero_position_disarmed>0</zero_position_disarmed>
+         <zero_position_armed>100</zero_position_armed>
+         <joint_control_type>velocity</joint_control_type>
+       </channel>
+
+       <channel name='rotor4'>
+         <input_index>3</input_index>
+         <input_offset>0</input_offset>
+         <input_scaling>1000</input_scaling>
+         <zero_position_disarmed>0</zero_position_disarmed>
+         <zero_position_armed>100</zero_position_armed>
+         <joint_control_type>velocity</joint_control_type>
+       </channel>
+
+     </control_channels>
+
+    </plugin>
+    <plugin name='rotors_gazebo_imu_plugin'
+            filename='libgazebo_imu_plugin.so'>
+       <robotNamespace>/drone</robotNamespace>
+       <linkName>Drone_link</linkName>
+       <imuTopic>/imu</imuTopic>
+       <magSubTopic>/mag</magSubTopic>
+       <baroSubTopic>/baro</baroSubTopic>
+    </plugin>
+
+
+    <plugin name="odometry_plugin"
+            filename="libgazebo_ros_p3d.so">
+
+       <ros>
+         <namespace>/drone</namespace>
+       </ros>
+
+       <body_name>Drone_link</body_name>
+
+       <frame_name>odom</frame_name>
+       <child_frame_name>Drone_link</child_frame_name>
+
+       <publish_tf>true</publish_tf>
+
+       <update_rate>30</update_rate>
+
+    </plugin>    
+    
+  </model>
+</sdf>

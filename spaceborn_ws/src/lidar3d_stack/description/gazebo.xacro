@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<robot name="bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- ═══════════════════════════════════════════════════════
+         LIDAR SENSOR PROFILE SWITCHER
+         Default  → os1_64 (64-beam Ouster OS1-64)
+         Optional → vlp16  (16-beam Velodyne VLP-16)
+         ═══════════════════════════════════════════════════════ -->
+
+    <xacro:arg      name="lidar_profile" default="os1_64"/>
+    <xacro:property name="profile"       value="$(arg lidar_profile)"/>
+
+    <!-- ── PROFILE 1 : OS1-64 64-beam (DEFAULT) ── -->
+    <xacro:if value="${profile == 'os1_64'}">
+        <gazebo reference="lidar_link">
+            <sensor name="lidar_os1_64" type="gpu_lidar">
+                <pose>0 0 0.1 0 0 0</pose>
+                <always_on>true</always_on>
+                <visualize>true</visualize>
+                <topic>scan_3d</topic>
+                <update_rate>10</update_rate>
+                <gz_frame_id>lidar_link</gz_frame_id>
+                <lidar>
+                    <scan>
+                        <horizontal>
+                            <samples>360</samples>
+                            <resolution>1.0</resolution>
+                            <min_angle>-3.14159</min_angle>
+                            <max_angle>3.14159</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>64</samples>
+                            <resolution>1.0</resolution>
+                            <min_angle>-0.39269</min_angle>
+                            <max_angle>0.39269</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.05</min>
+                        <max>120.0</max>
+                        <resolution>0.02</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.03</stddev>
+                    </noise>
+                </lidar>
+            </sensor>
+        </gazebo>
+    </xacro:if>
+
+    <!-- ── PROFILE 2 : VLP-16 16-beam ── -->
+    <xacro:if value="${profile == 'vlp16'}">
+        <gazebo reference="lidar_link">
+            <sensor name="lidar_vlp16" type="gpu_lidar">
+                <pose>0 0 0 0 0 0</pose>
+                <always_on>true</always_on>
+                <visualize>true</visualize>
+                <topic>scan_3d</topic>
+                <update_rate>10</update_rate>
+                <gz_frame_id>lidar_link</gz_frame_id>
+                <lidar>
+                    <scan>
+                        <horizontal>
+                            <samples>360</samples>
+                            <resolution>1.0</resolution>
+                            <min_angle>-3.14159</min_angle>
+                            <max_angle>3.14159</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>16</samples>
+                            <resolution>1.0</resolution>
+                            <min_angle>-0.26179</min_angle>
+                            <max_angle>0.26179</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.05</min>
+                        <max>120.0</max>
+                        <resolution>0.02</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.03</stddev>
+                    </noise>
+                </lidar>
+            </sensor>
+        </gazebo>
+    </xacro:if>
+
+</robot>

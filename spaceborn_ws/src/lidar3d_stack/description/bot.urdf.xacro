@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<robot name="bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- ── Arguments ─────────────────────────────────────────────── -->
+    <xacro:arg name="is_sim"        default="false"/>
+    <xacro:arg name="lidar_profile" default="os1_64"/>
+    <xacro:arg name="robot_type"    default="rover"/>
+    
+    <xacro:include filename="$(find lidar3d_stack)/description/gazebo.xacro"/>
+
+    <xacro:property name="robot"    value="$(arg robot_type)"/>
+    <!-- ROVER -->
+    <xacro:if value="${robot == 'rover'}">
+        <xacro:include filename="$(find lidar3d_stack)/description/rover.xacro"/>
+    </xacro:if>
+
+    <!-- DRONE -->
+    <xacro:if value="${robot == 'drone'}">
+        <xacro:include filename="$(find lidar3d_stack)/description/drone.xacro"/>
+    </xacro:if>
+
+</robot>

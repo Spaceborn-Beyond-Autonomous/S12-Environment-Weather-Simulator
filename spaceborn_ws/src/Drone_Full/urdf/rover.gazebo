@@ -1,0 +1,19 @@
+  <gazebo>
+    <plugin name="gazebo_ros_diff_drive" filename="libgazebo_ros_diff_drive.so">
+      <ros>
+        <namespace>/rover</namespace>
+      </ros>
+
+      <left_joint>left_front_wheel_joint</left_joint>
+      <right_joint>right_front_wheel_joint</right_joint>
+
+      <wheel_separation>0.1382</wheel_separation>
+      <wheel_diameter>0.0437</wheel_diameter>
+      
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+      <update_rate>50</update_rate>
+    </plugin>
+  </gazebo>

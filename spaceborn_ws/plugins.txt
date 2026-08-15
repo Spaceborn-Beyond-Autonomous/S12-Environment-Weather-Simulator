@@ -1,0 +1,134 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <world name="urban_street">
+    <physics name="default_physics" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <!-- Essential System Plugins (Now correctly inside the world block) -->
+    <plugin
+        filename="gz-sim-physics-system"
+        name="gz::sim::systems::Physics"/>
+
+    <plugin
+        filename="gz-sim-user-commands-system"
+        name="gz::sim::systems::UserCommands"/>
+
+    <plugin
+        filename="gz-sim-scene-broadcaster-system"
+        name="gz::sim::systems::SceneBroadcaster"/>
+
+    <plugin
+        filename="gz-sim-sensors-system"
+        name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <plugin
+        filename="gz-sim-particle-emitter-system"
+        name="gz::sim::systems::ParticleEmitter"/>
+
+    <!-- Rain Emitter Model -->
+    <model name="rain_generator">
+      <static>true</static>
+      <pose>0 0 12 0 0 0</pose>
+      <link name="rain_link">
+        <particle_emitter name="rain_emitter" type="box">
+          <size>20 20 20</size>
+          <rate>10000</rate>
+          <duration>0</duration>
+          <emitting>true</emitting>
+          <particle_size>0.04 0.04 0.6</particle_size>
+          <lifetime>0.05</lifetime>
+          <min_velocity>0 0 15.0</min_velocity>
+          <max_velocity>0 0 22.0</max_velocity>
+          <material>
+            <ambient>0.5 0.7 1.0 1</ambient>
+            <diffuse>0.5 0.7 1.0 1</diffuse>
+          </material>
+        </particle_emitter>
+      </link>
+    </model>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <world name="urban_street">
+    <physics name="default_physics" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <!-- Essential System Plugins (Now correctly inside the world block) -->
+    <plugin
+        filename="gz-sim-physics-system"
+        name="gz::sim::systems::Physics"/>
+
+    <plugin
+        filename="gz-sim-user-commands-system"
+        name="gz::sim::systems::UserCommands"/>
+
+    <plugin
+        filename="gz-sim-scene-broadcaster-system"
+        name="gz::sim::systems::SceneBroadcaster"/>
+
+    <plugin
+        filename="gz-sim-sensors-system"
+        name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <plugin
+        filename="gz-sim-particle-emitter-system"
+        name="gz::sim::systems::ParticleEmitter"/>
+
+    <!-- Snow Emitter Model -->
+    <model name="snow_generator">
+      <static>true</static>
+      <pose>0 0 25 0 0 0</pose>
+
+      <link name="snow_link">
+
+        <particle_emitter name="snow_emitter" type="box">
+
+          <!-- Large area where snow is generated -->
+          <size>50 50 50</size>
+
+          <!-- Fewer particles than rain -->
+          <rate>1000</rate>
+
+          <duration>0</duration>
+
+          <emitting>true</emitting>
+
+          <!-- Snowflakes -->
+          <particle_size>0.1 0.1 0.1</particle_size>
+
+          <!-- Snow stays alive much longer -->
+          <lifetime>8.0</lifetime>
+
+          <!-- Slow falling -->
+          <min_velocity>0 0 1.5</min_velocity>
+          <max_velocity>0 0 3.0</max_velocity>
+
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+
+        </particle_emitter>
+
+      </link>
+
+    </model>

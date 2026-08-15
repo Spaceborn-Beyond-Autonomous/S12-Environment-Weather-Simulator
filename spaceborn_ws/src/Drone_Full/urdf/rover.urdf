@@ -1,0 +1,416 @@
+<?xml version="1.0"?>
+<robot name="d02_rover">
+
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <material name="body_blue_gray">
+    <color rgba="0.52 0.68 0.82 1.0"/>
+  </material>
+  <material name="wheel_black">
+    <color rgba="0.02 0.02 0.02 1.0"/>
+  </material>
+  <!-- FIX: renamed lidar_dark → rover_lidar_dark to avoid material name clash -->
+  <material name="rover_lidar_dark">
+    <color rgba="0.10 0.10 0.12 1.0"/>
+  </material>
+  <material name="rover_camera_black">
+    <color rgba="0.01 0.01 0.01 1.0"/>
+  </material>
+
+  <!-- Base Link -->
+  <link name="base_link">
+    <inertial>
+      <origin xyz="-0.003243 0.024058 -1.4806E-05" rpy="0 0 0"/>
+      <mass value="0.82398"/>
+      <inertia ixx="0.0013928" ixy="-2.8057E-05" ixz="7.1104E-07"
+               iyy="0.0031842" iyz="-3.6991E-08" izz="0.0026084"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/ashutosh/spaceborn_ws/src/Drone_Full/meshes/base_link.STL"/>
+      </geometry>
+      <material name="body_blue_gray"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.035" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.20 0.15 0.07"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Left Front Wheel -->
+  <link name="left_front_wheel">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01952"/>
+      <inertia ixx="4.4321E-06" ixy="0" ixz="0"
+               iyy="2.7146E-06" iyz="0" izz="2.7146E-06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.02185" length="0.0193"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.02185" length="0.0193"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="left_front_wheel_joint" type="continuous">
+    <origin xyz="0.065104 0.0691 -0.045333" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="left_front_wheel"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="30" velocity="20"/>
+    <dynamics damping="0.5" friction="0.1"/>
+  </joint>
+
+  <!-- Right Front Wheel -->
+  <link name="right_front_wheel">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01952"/>
+      <inertia ixx="4.4321E-06" ixy="0" ixz="0"
+               iyy="2.7146E-06" iyz="0" izz="2.7146E-06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.02185" length="0.0193"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.02185" length="0.0193"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="right_front_wheel_joint" type="continuous">
+    <origin xyz="0.065104 -0.0691 -0.045333" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="right_front_wheel"/>
+    <axis xyz="0 -1 0"/>
+    <limit effort="30" velocity="20"/>
+    <dynamics damping="0.5" friction="0.1"/>
+  </joint>
+
+  <!-- Left Rear Wheel -->
+  <link name="left_rear_wheel">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01952"/>
+      <inertia ixx="4.4321E-06" ixy="0" ixz="0"
+               iyy="2.7146E-06" iyz="0" izz="2.7146E-06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.02185" length="0.0193"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.02185" length="0.0193"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="left_rear_wheel_joint" type="continuous">
+    <origin xyz="-0.065104 0.0691 -0.045333" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="left_rear_wheel"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="30" velocity="20"/>
+    <dynamics damping="0.5" friction="0.1"/>
+  </joint>
+
+  <!-- Right Rear Wheel -->
+  <link name="right_rear_wheel">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.01952"/>
+      <inertia ixx="4.4321E-06" ixy="0" ixz="0"
+               iyy="2.7146E-06" iyz="0" izz="2.7146E-06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.02185" length="0.0193"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.02185" length="0.0193"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="right_rear_wheel_joint" type="continuous">
+    <origin xyz="-0.065104 -0.0691 -0.045333" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="right_rear_wheel"/>
+    <axis xyz="0 -1 0"/>
+    <limit effort="30" velocity="20"/>
+    <dynamics damping="0.5" friction="0.1"/>
+  </joint>
+
+  <!-- FIX: renamed lidar_link → rover_lidar_link to avoid clash with drone's lidar_link -->
+  <link name="rover_lidar_link">
+    <inertial>
+      <origin xyz="-0.0018181 0.0066983 7.5722E-07" rpy="0 0 0"/>
+      <mass value="0.013231"/>
+      <inertia ixx="1.0958E-06" ixy="1.1107E-07" ixz="-4.6296E-11"
+               iyy="1.5554E-06" iyz="2.5155E-11" izz="1.103E-06"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 3.1416"/>
+      <geometry>
+        <mesh filename="file:///home/ashutosh/spaceborn_ws/src/Drone_Full/meshes/lidar_link.STL"/>
+      </geometry>
+      <material name="rover_lidar_dark"/>
+    </visual>
+  </link>
+
+  <!-- FIX: joint also updated to use rover_lidar_link -->
+  <joint name="rover_lidar_joint" type="fixed">
+    <origin xyz="-0.041844 0 0.118" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="rover_lidar_link"/>
+  </joint>
+
+  <!-- Camera Link -->
+  <!-- FIX: renamed camera_link → rover_camera_link to avoid any future clash -->
+  <link name="rover_camera_link">
+    <inertial>
+      <origin xyz="-3.7405E-18 0 0.0037742" rpy="0 0 0"/>
+      <mass value="0.0020681"/>
+      <inertia ixx="1.0656E-07" ixy="-3.4849E-23" ixz="-4.09E-23"
+               iyy="1.9863E-07" iyz="2.4264E-23" izz="2.2359E-07"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/ashutosh/spaceborn_ws/src/Drone_Full/meshes/camera_link.STL"/>
+      </geometry>
+      <material name="rover_camera_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.03 0.03 0.03"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="rover_camera_joint" type="fixed">
+    <origin xyz="0.096 0.00032207 0.041" rpy="1.5708 0 1.5708"/>
+    <parent link="base_link"/>
+    <child link="rover_camera_link"/>
+  </joint>
+
+  <!-- ============================================================ -->
+  <!-- Diff Drive — FRONT (publishes odom, listens to /rover/cmd_vel) -->
+  <!-- ============================================================ -->
+  <gazebo>
+    <plugin name="gazebo_ros_diff_drive_front" filename="libgazebo_ros_diff_drive.so">
+      <ros>
+        <!-- FIX: proper /rover namespace so topics are /rover/cmd_vel, /rover/odom -->
+        <namespace>/rover</namespace>
+      </ros>
+      <left_joint>left_front_wheel_joint</left_joint>
+      <right_joint>right_front_wheel_joint</right_joint>
+      <wheel_separation>0.1382</wheel_separation>
+      <wheel_diameter>0.0437</wheel_diameter>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+      <update_rate>50</update_rate>
+      <max_wheel_torque>10.0</max_wheel_torque>
+      <max_wheel_acceleration>1.5</max_wheel_acceleration>
+    </plugin>
+  </gazebo>
+
+  <!-- Diff Drive — REAR (mirrors cmd_vel via relay) -->
+  <gazebo>
+    <plugin name="gazebo_ros_diff_drive_rear" filename="libgazebo_ros_diff_drive.so">
+      <ros>
+        <namespace>/rover</namespace>
+        <remapping>cmd_vel:=cmd_vel_rear</remapping>
+      </ros>
+      <left_joint>left_rear_wheel_joint</left_joint>
+      <right_joint>right_rear_wheel_joint</right_joint>
+      <wheel_separation>0.1382</wheel_separation>
+      <wheel_diameter>0.0437</wheel_diameter>
+      <publish_odom>false</publish_odom>
+      <publish_odom_tf>false</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+      <update_rate>50</update_rate>
+      <max_wheel_torque>10.0</max_wheel_torque>
+      <max_wheel_acceleration>1.5</max_wheel_acceleration>
+    </plugin>
+  </gazebo>
+
+  <!-- Wheel Physics -->
+  <gazebo reference="left_front_wheel">
+    <mu1>1.81</mu1>
+    <mu2>0.085</mu2>
+    <fdir1>0 1 0</fdir1>
+    <kp>1000000.0</kp>
+    <kd>80.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.5</maxVel>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="right_front_wheel">
+    <mu1>1.81</mu1>
+    <mu2>0.085</mu2>
+    <fdir1>0 1 0</fdir1>
+    <kp>1000000.0</kp>
+    <kd>80.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.5</maxVel>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="left_rear_wheel">
+    <mu1>1.63</mu1>
+    <mu2>0.076</mu2>
+    <fdir1>0 1 0</fdir1>
+    <kp>1000000.0</kp>
+    <kd>80.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.5</maxVel>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="right_rear_wheel">
+    <mu1>1.63</mu1>
+    <mu2>0.076</mu2>
+    <fdir1>0 1 0</fdir1>
+    <kp>1000000.0</kp>
+    <kd>80.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.5</maxVel>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <!-- FIX: rover LiDAR uses renamed rover_lidar_link and /rover namespace -->
+  <gazebo reference="rover_lidar_link">
+    <material>Gazebo/DarkGrey</material>
+    <sensor name="rover_lidar" type="ray">
+      <pose>0 0 0 0 0 0</pose>
+      <update_rate>10</update_rate>
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>180</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>16</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.2618</min_angle>
+            <max_angle>0.2618</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.3</min>
+          <max>40.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.001</stddev>
+        </noise>
+      </ray>
+      <plugin name="rover_lidar_controller" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <namespace>/rover</namespace>
+          <remapping>~/out:=lidar/points</remapping>
+        </ros>
+        <output_type>sensor_msgs/PointCloud2</output_type>
+        <!-- FIX: frame_name updated to rover_lidar_link -->
+        <frame_name>rover_lidar_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- FIX: camera and IMU now use Gazebo Classic plugin syntax (removed gz_frame_id / topic tags) -->
+  <gazebo reference="rover_camera_link">
+    <material>Gazebo/Black</material>
+    <sensor name="rover_front_camera" type="camera">
+      <pose>0 0 0 0 0 0</pose>
+      <update_rate>15</update_rate>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.03</near>
+          <far>20.0</far>
+        </clip>
+      </camera>
+      <plugin name="rover_camera_controller" filename="libgazebo_ros_camera.so">
+        <ros>
+          <namespace>/rover</namespace>
+        </ros>
+        <camera_name>front_camera</camera_name>
+        <frame_name>rover_camera_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="base_link">
+    <material>Gazebo/SkyBlue</material>
+    <!-- FIX: IMU now uses Gazebo Classic plugin, proper namespace -->
+    <sensor name="rover_imu_sensor" type="imu">
+      <pose>0 0 0 0 0 0</pose>
+      <update_rate>50</update_rate>
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <plugin name="rover_imu_controller" filename="libgazebo_ros_imu_sensor.so">
+        <ros>
+          <namespace>/rover</namespace>
+          <remapping>~/out:=imu</remapping>
+        </ros>
+        <frame_name>base_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>

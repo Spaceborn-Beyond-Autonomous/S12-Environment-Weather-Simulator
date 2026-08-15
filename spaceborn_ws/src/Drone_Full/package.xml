@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>Drone_Full</name>
+  <version>0.0.1</version>
+  <description>Drone description package</description>
+
+  <maintainer email="ashutosh@example.com">Ashutosh</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
