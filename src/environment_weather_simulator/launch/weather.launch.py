@@ -80,30 +80,28 @@ def launch_setup(context, *args, **kwargs):
     generated_world = generator.prepare_world(effect)
 
     # ------------------------------------------------------------------
-    # Launch simulator
+    # Launch Gazebo
     # ------------------------------------------------------------------
 
-    ansa_share = Path(
-        get_package_share_directory(
-            "ansa_digital_twin"
-        )
-    )
-
-    simulator = IncludeLaunchDescription(
+    gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             str(
-                ansa_share
+                Path(
+                    get_package_share_directory(
+                        "ros_gz_sim"
+                    )
+                )
                 / "launch"
-                / "sim.launch.py"
+                / "gz_sim.launch.py"
             )
         ),
         launch_arguments={
-            "world": generated_world,
+            "gz_args": f"-r {generated_world}",
         }.items(),
     )
 
     return [
-        simulator,
+        gazebo_launch,
     ]
 
 
