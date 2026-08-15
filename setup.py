@@ -78,11 +78,12 @@ setup(
         ),
 
 
-        # Gazebo worlds
+        # Gazebo world files
         (
             os.path.join(
                 "share",
                 package_name,
+                "gazebo",
                 "worlds"
             ),
             glob(
@@ -90,18 +91,28 @@ setup(
             ),
         ),
 
-
-        # Gazebo weather effects
+        # Gazebo weather effect files
         (
             os.path.join(
                 "share",
                 package_name,
-                "worlds",
+                "gazebo",
                 "effects"
             ),
             glob(
                 "environment_weather_simulator/gazebo/effects/*.sdf"
             ),
+        ),
+        # Gazebo generator Python file
+        (
+            os.path.join(
+                "share",
+                package_name,
+                "gazebo"
+            ),
+            [
+                "environment_weather_simulator/gazebo/world_generator.py"
+            ],
         ),
 
     ],
@@ -141,6 +152,7 @@ setup(
             "wind_test = environment_weather_simulator.wind.__main__:main",
             "solar_test = environment_weather_simulator.solar_thermal.__main__:main",
             "emi_test = environment_weather_simulator.emi.__main__:main",
+            "environment_publisher = environment_weather_simulator.integration.environment_publisher:main",
 
         ],
 
