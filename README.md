@@ -1,20 +1,109 @@
-# S12 – Environment & Weather Simulator
+# S12 Environment Weather Simulator
 
-## Phase 1: Architecture Overview
+<div align="center">
 
-## Purpose
+# 🌦️ S12 Environment Weather Simulator
 
-The Environment & Weather Simulator is responsible for generating realistic environmental conditions for simulation. It provides a centralized weather model that can be consumed by other modules through well-defined integration interfaces.
+**A Modular ROS 2 Environment Simulation Framework for Autonomous Systems**
 
-This document describes the project architecture only. Implementation details will be added after all development phases are completed.
+Weather, wind, solar, thermal, EMI and environmental-condition simulation for robotics, UAVs, sensor testing, and Digital Twin integration.
+
+![ROS2](https://img.shields.io/badge/ROS2-Jazzy-blue)
+![Python](https://img.shields.io/badge/Python-3.12+-yellow)
+![Platform](https://img.shields.io/badge/Platform-Ubuntu%2024.04-orange)
+![Gazebo](https://img.shields.io/badge/Gazebo-Sim-blue)
+
+</div>
 
 ---
 
-# Project Structure
-## Repository Structure
+# 📖 Overview
 
-```
-S12-Environment-Weather-Simulator/
+The **S12 Environment Weather Simulator** is a modular ROS 2 simulation framework for generating environmental conditions and integrating them with autonomous-system simulations.
+
+The framework provides:
+
+* Weather effects
+* Wind field simulation
+* Gust, shear and turbulence
+* Solar radiation simulation
+* Thermal/environment temperature simulation
+* EMI simulation
+* Environmental scenario handling
+* Gazebo weather visualization
+* ROS 2 integration
+* Sensor/environment data publishing
+* Digital Twin integration interfaces
+* ANSA Drone integration
+* Configurable YAML-based scenarios
+
+The simulator is designed to act as an **environment simulation layer** between environmental models, Gazebo, ROS 2 sensors, autonomous-system software, and a Digital Twin.
+
+---
+
+# ✨ Features
+
+* ROS 2 Jazzy support
+* Gazebo Sim integration
+* Modular environment models
+* Rain simulation
+* Fog simulation
+* Snow simulation
+* Dust simulation
+* Storm simulation
+* Clear-weather mode
+* Wind field simulation
+* Wind shear
+* Wind gust
+* Turbulence
+* Solar simulation
+* Thermal simulation
+* EMI simulation
+* Scenario configuration
+* Timeline support
+* ROS 2 environment publisher
+* Sensor/environment bridges
+* ANSA Drone integration
+* Digital Twin integration
+* Gazebo world generation
+* Reusable base world
+* Generated weather world
+* YAML configuration
+* Test executables
+
+---
+
+# 🌦️ Weather Effects
+
+| Effect | Status |
+|--------|:------:|
+| 🌧 Rain | ✅ |
+| 🌫 Fog | ✅ |
+| ❄ Snow | ✅ |
+| 🌪 Dust | ✅ |
+| ⛈ Storm | ✅ |
+| ☀ Clear | ✅ |
+
+---
+
+# 🌬️ Environmental Models
+
+| Module | Status |
+|--------|:------:|
+| Wind Field | ✅ |
+| Gust | ✅ |
+| Wind Shear | ✅ |
+| Turbulence | ✅ |
+| Solar | ✅ |
+| Thermal | ✅ |
+| EMI | ✅ |
+
+---
+
+# 📂 Repository Structure
+
+```text
+S12-Environment-Weather-Simulator
 │
 ├── config/
 │   ├── clear_weather.yaml
@@ -31,194 +120,550 @@ S12-Environment-Weather-Simulator/
 │   └── user_guide.md
 │
 ├── environment_weather_simulator/
-│   │
-│   ├── api.py
-│   ├── engine.py
-│   ├── scenario_loader.py
-│   ├── timeline.py
+│   ├── emi/
+│   │   └── emi_model.py
 │   │
 │   ├── gazebo/
-│   │   ├── world_generator.py
 │   │   ├── effects/
+│   │   │   ├── clear.sdf
+│   │   │   ├── dust.sdf
+│   │   │   ├── fog.sdf
+│   │   │   ├── rain.sdf
+│   │   │   ├── snow.sdf
+│   │   │   └── storm.sdf
+│   │   │
+│   │   ├── world_generator.py
 │   │   └── worlds/
+│   │       ├── base_world.sdf
+│   │       └── generated_world.sdf
+│   │
+│   ├── integration/
+│   │   ├── ansa_drone/
+│   │   │   └── integration.py
+│   │   ├── digital_earth_bridge.py
+│   │   ├── digital_twin_bridge.py
+│   │   ├── dt_server.py
+│   │   ├── environment_publisher.py
+│   │   ├── lidar_bridge.py
+│   │   ├── nav_bridge.py
+│   │   ├── vision_bridge.py
+│   │   ├── weather_camera.py
+│   │   ├── weather_gps.py
+│   │   └── weather_imu.py
 │   │
 │   ├── precipitation/
-│   │   ├── rain_model.py
-│   │   ├── snow_model.py
+│   │   ├── attenuation.py
 │   │   ├── fog_dust_model.py
-│   │   └── attenuation.py
-│   │
-│   ├── wind/
-│   │   ├── wind_field.py
-│   │   ├── gust_shear.py
-│   │   └── turbulence.py
+│   │   ├── rain_model.py
+│   │   └── snow_model.py
 │   │
 │   ├── solar_thermal/
 │   │   ├── solar_model.py
 │   │   └── thermal_model.py
 │   │
-│   ├── emi/
-│   │   └── emi_model.py
+│   ├── wind/
+│   │   ├── gust_shear.py
+│   │   ├── turbulence.py
+│   │   └── wind_field.py
 │   │
-│   └── integration/
-│       ├── digital_twin_bridge.py
-│       ├── digital_earth_bridge.py
-│       ├── lidar_bridge.py
-│       ├── nav_bridge.py
-│       ├── vision_bridge.py
-│       ├── weather_camera.py
-│       ├── weather_gps.py
-│       ├── weather_imu.py
-│       └── dt_server.py
+│   ├── api.py
+│   ├── engine.py
+│   ├── scenario_loader.py
+│   └── timeline.py
 │
 ├── launch/
+│   ├── ansa_drone_weather.launch.py
 │   ├── environment_weather.launch.py
 │   ├── sensor_noise.launch.py
 │   └── weather.launch.py
 │
-├── resource/
 ├── test/
+│   ├── test_api.py
+│   ├── test_engine.py
+│   ├── test_scenario_loader.py
+│   └── test_timeline.py
+│
 ├── package.xml
 ├── setup.py
-└── README.md
+├── setup.cfg
+├── requirements.txt
+├── resource/
+├── README.md
+└── LICENSE
 ```
+
+> **Note:** `build/`, `install/`, and `log/` are generated by Colcon and are not part of the source repository structure.
+
 ---
 
-# Architecture
+# 🏗 Architecture
 
-# Simulator Workflow
-
-The Environment & Weather Simulator follows a centralized execution pipeline. Rather than maintaining separate launch files for each weather condition, the simulator uses a single configurable launch file that generates the required environment based on the selected weather effect.
-
-## Execution Flow
-
+```text
+                    S12 Environment Simulator
+                              │
+                              ▼
+                     Scenario / Config
+                              │
+                              ▼
+                    Environment Engine
+                              │
+          ┌───────────────────┼───────────────────┐
+          │                   │                   │
+          ▼                   ▼                   ▼
+       Weather              Wind           Solar / Thermal
+          │                   │                   │
+          │                   ▼                   │
+          │          Gust / Shear /              │
+          │           Turbulence                 │
+          │                   │                   │
+          └───────────────────┼───────────────────┘
+                              ▼
+                    Environment State
+                              │
+              ┌───────────────┼───────────────┐
+              │               │               │
+              ▼               ▼               ▼
+           Gazebo          ROS 2           EMI Model
+              │               │               │
+              │               ▼               │
+              │        Sensor / Vehicle       │
+              │           Interfaces          │
+              │               │               │
+              └───────────────┼───────────────┘
+                              ▼
+                       Digital Twin
+                              │
+                              ▼
+                     Visualization / UI
 ```
-User Command
-      │
-      ▼
-weather.launch.py
-      │
-      ▼
-Load YAML Configuration
+
+---
+
+# 🔄 Data Flow
+
+```text
+YAML / Scenario
       │
       ▼
 Scenario Loader
       │
       ▼
-Timeline Manager
-      │
-      ▼
 Environment Engine
       │
-      ├───────────────────────────────────────┐
-      │                                       │
-      ▼                                       ▼
-Weather Models                         World Generator
-(Rain, Fog, Snow, Wind,               (Generate SDF World)
- Storm, Dust, Solar,
- Thermal, EMI)
-      │                                       │
-      └──────────────────┬────────────────────┘
-                         ▼
-                Generated Weather State
-                         │
-                         ▼
-          Gazebo Simulation Environment
-                         │
-                         ▼
-            Integration Interfaces
-      ├──────────────┬──────────────┬──────────────┐
-      ▼              ▼              ▼              ▼
- Digital Twin   Navigation      Vision         LiDAR
-        │
-        ├──────────────┐
-        ▼              ▼
- Weather GPS      Weather IMU
-```
----
-# Gazebo World Generation
+      ├──────────► Weather Models
+      │                 │
+      │                 ▼
+      │          Rain / Fog / Snow /
+      │          Dust / Storm / Clear
+      │
+      ├──────────► Wind Models
+      │                 │
+      │                 ▼
+      │          Wind / Gust / Shear /
+      │          Turbulence
+      │
+      ├──────────► Solar Model
+      │                 │
+      │                 ▼
+      │          Solar Radiation
+      │
+      ├──────────► Thermal Model
+      │                 │
+      │                 ▼
+      │          Temperature / Thermal State
+      │
+      └──────────► EMI Model
+                        │
+                        ▼
+                  EMI Conditions
 
-Directory:
-
-```text
-environment_weather_simulator/gazebo/
-```
-
-Files:
-
-```text
-world_generator.py
-
-effects/
-worlds/
-```
-
-The simulator automatically creates a simulation world based on the selected weather configuration.
-
-Current functionality includes:
-
-- Loading base world
-- Selecting weather effects
-- Inserting SDF effect models
-- Generating final simulation world
-- Exporting generated SDF world
-
-Generated worlds are ready for Gazebo simulation.
-
----
-
-## Weather Effect Assets
-
-Current available weather assets:
-
-```text
-effects/
-├── rain.sdf
-├── fog.sdf
-├── snow.sdf
-├── dust.sdf
-└── storm.sdf
+             Environment State
+                    │
+        ┌───────────┼───────────┐
+        ▼           ▼           ▼
+      Gazebo       ROS 2     Digital Twin
+        │           │           │
+        ▼           ▼           ▼
+    Visual        Sensors     State /
+    Effects       / Vehicle   Environment
 ```
 
 ---
 
-# World Generation Pipeline
+# 🛠️ Installation
 
-```text
-Base World
-      │
-      ▼
-Weather Configuration
-      │
-      ▼
-World Generator
-      │
-      ▼
-Insert Weather Effects
-      │
-      ▼
-Generate SDF World
-      │
-      ▼
-Generated World
-      │
-      ▼
-Gazebo Simulation
+## 1. Clone / enter the repository
+
+```bash
+cd ~/S12-Environment-Weather-Simulator
+```
+
+## 2. Source ROS 2
+
+```bash
+source /opt/ros/jazzy/setup.bash
+```
+
+## 3. Install Python requirements
+
+```bash
+pip3 install -r requirements.txt
+```
+
+If Ubuntu reports an externally managed Python environment, use the ROS/Python environment recommended for your system rather than forcing a system-wide pip installation.
+
+## 4. Build
+
+```bash
+cd ~/S12-Environment-Weather-Simulator
+
+colcon build --symlink-install
+```
+
+## 5. Source the workspace
+
+```bash
+source ~/S12-Environment-Weather-Simulator/install/setup.bash
 ```
 
 ---
 
-# Configuration System
+# 🌦️ Weather Simulation
 
-The simulator uses YAML configuration files to describe weather conditions.
+## Generate a Weather World
 
-Configuration directory:
+```bash
+ros2 run environment_weather_simulator world_generator --effect rain
+```
+
+Available effects:
+
+```text
+rain
+fog
+snow
+dust
+storm
+clear
+```
+
+Examples:
+
+```bash
+ros2 run environment_weather_simulator world_generator --effect rain
+```
+
+```bash
+ros2 run environment_weather_simulator world_generator --effect fog
+```
+
+```bash
+ros2 run environment_weather_simulator world_generator --effect snow
+```
+
+```bash
+ros2 run environment_weather_simulator world_generator --effect dust
+```
+
+```bash
+ros2 run environment_weather_simulator world_generator --effect storm
+```
+
+```bash
+ros2 run environment_weather_simulator world_generator --effect clear
+```
+
+The generated world is written to:
+
+```text
+environment_weather_simulator/gazebo/worlds/generated_world.sdf
+```
+
+---
+
+# 🚀 Weather Launch
+
+## General Environment Weather Launch
+
+```bash
+ros2 launch environment_weather_simulator weather.launch.py effect:=rain
+```
+
+Change the effect as required:
+
+```bash
+ros2 launch environment_weather_simulator weather.launch.py effect:=fog
+```
+
+```bash
+ros2 launch environment_weather_simulator weather.launch.py effect:=snow
+```
+
+```bash
+ros2 launch environment_weather_simulator weather.launch.py effect:=dust
+```
+
+```bash
+ros2 launch environment_weather_simulator weather.launch.py effect:=storm
+```
+
+```bash
+ros2 launch environment_weather_simulator weather.launch.py effect:=clear
+```
+
+---
+
+# 🚁 ANSA Drone Weather Simulation
+
+The ANSA Drone launch integrates the generated environment with the drone simulation and ROS 2 interfaces.
+
+## Rain
+
+```bash
+ros2 launch environment_weather_simulator ansa_drone_weather.launch.py effect:=rain
+```
+
+## Fog
+
+```bash
+ros2 launch environment_weather_simulator ansa_drone_weather.launch.py effect:=fog
+```
+
+## Snow
+
+```bash
+ros2 launch environment_weather_simulator ansa_drone_weather.launch.py effect:=snow
+```
+
+## Dust
+
+```bash
+ros2 launch environment_weather_simulator ansa_drone_weather.launch.py effect:=dust
+```
+
+## Storm
+
+```bash
+ros2 launch environment_weather_simulator ansa_drone_weather.launch.py effect:=storm
+```
+
+## Clear
+
+```bash
+ros2 launch environment_weather_simulator ansa_drone_weather.launch.py effect:=clear
+```
+
+---
+
+# 🌬️ Wind Simulation
+
+Run the wind test:
+
+```bash
+ros2 run environment_weather_simulator wind_test
+```
+
+The wind module evaluates environmental wind conditions such as:
+
+* Wind velocity
+* Wind direction
+* Wind shear
+* Gust
+* Turbulence
+* Position-dependent wind behaviour
+
+Example test positions can be used to verify how wind conditions change with altitude.
+
+---
+
+# ☀️ Solar Simulation
+
+Run the solar model test:
+
+```bash
+ros2 run environment_weather_simulator solar_test
+```
+
+The solar module can be used as an environmental input for:
+
+* Solar radiation
+* Environmental energy conditions
+* Thermal calculations
+* Solar-dependent vehicle/environment behaviour
+
+---
+
+# 🌡️ Thermal Simulation
+
+Thermal modelling is included in the solar/thermal subsystem.
+
+It can be integrated with the environment engine to represent environmental temperature and thermal conditions.
+
+For combined solar/thermal testing:
+
+```bash
+ros2 run environment_weather_simulator solar_test
+```
+
+---
+
+# 📡 EMI Simulation
+
+Run the EMI test:
+
+```bash
+ros2 run environment_weather_simulator emi_test
+```
+
+The EMI module provides environmental electromagnetic-interference conditions that can be used for testing communication and sensor behaviour.
+
+---
+
+# 📡 Environment Publisher
+
+Run the environment publisher:
+
+```bash
+ros2 run environment_weather_simulator environment_publisher
+```
+
+This interface is intended to expose simulator/environment information to the ROS 2 system and downstream integration components.
+
+---
+
+# 🔗 Digital Twin Integration
+
+The S12 simulator can be integrated with a Digital Twin through ROS 2 interfaces.
+
+```text
+              S12 Environment Simulator
+                       │
+                       ▼
+               Environment State
+                       │
+                       ▼
+              Environment Publisher
+                       │
+                       ▼
+                    ROS 2
+                       │
+              ┌────────┴────────┐
+              │                 │
+              ▼                 ▼
+        Digital Twin       Drone / Sensors
+              │                 │
+              └────────┬────────┘
+                       ▼
+                Digital Twin UI
+```
+
+The Digital Twin can consume:
+
+* Weather state
+* Wind state
+* Solar conditions
+* Thermal conditions
+* EMI conditions
+* Vehicle state
+* Sensor state
+* Navigation state
+* Environmental effects
+
+---
+
+# 🔌 ANSA Drone Integration Flow
+
+```text
+S12 Environment
+      │
+      ├── Weather
+      ├── Wind
+      ├── Solar
+      ├── Thermal
+      └── EMI
+             │
+             ▼
+      Environment Engine
+             │
+             ▼
+      ANSA Drone Simulation
+             │
+             ├── IMU
+             ├── GPS
+             ├── Barometer
+             ├── Odometry
+             └── Battery
+             │
+             ▼
+        ROS 2 Topics
+             │
+             ▼
+       Digital Twin
+```
+
+---
+
+# 🌉 ROS 2 ↔ Gazebo Integration
+
+The ANSA Drone integration uses `ros_gz_bridge` to exchange data between Gazebo and ROS 2.
+
+Typical interfaces include:
+
+```text
+Gazebo                         ROS 2
+------------------------------------------------
+/imu/data                 ↔    /imu/data
+/gps/fix                  ↔    /gps/fix
+/baro/data                ↔    /baro/data
+/model/ansa_drone/odometry ↔   /model/ansa_drone/odometry
+/model/ansa_drone/.../state ↔  /model/ansa_drone/.../state
+/ansa_drone/cmd_vel       ↔    /ansa_drone/cmd_vel
+/ansa_drone/enable        ↔    /ansa_drone/enable
+```
+
+This allows the environment simulator to work with the existing vehicle simulation and ROS 2 software stack.
+
+---
+
+# ⚠️ Digital Twin Workspace Requirement
+
+If the Digital Twin package is stored in another workspace, that workspace must also be sourced before launching the ANSA Drone integration.
+
+Example:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+
+source ~/Spaceborn-Digital-Twin-main/install/setup.bash
+
+source ~/S12-Environment-Weather-Simulator/install/setup.bash
+```
+
+Verify:
+
+```bash
+ros2 pkg prefix ansa_digital_twin
+```
+
+If the package is available, ROS 2 should return its installed package path.
+
+Then run:
+
+```bash
+ros2 launch environment_weather_simulator ansa_drone_weather.launch.py effect:=rain
+```
+
+---
+
+# ⚙️ Configuration
+
+Environment configurations are stored in:
 
 ```text
 config/
 ```
 
-Current configuration files:
+Available configurations:
 
 ```text
 clear_weather.yaml
@@ -230,183 +675,237 @@ snow.yaml
 storm.yaml
 ```
 
-Each configuration defines weather parameters that are loaded by the Scenario Loader before the simulation begins.
+Configuration files can be used to define environment/scenario parameters without changing the main simulator architecture.
 
 ---
 
-# Launch System
+# 🧪 Testing
 
-Unlike many simulation projects, this repository does **not** maintain separate launch files for every weather condition.
+Run the Python test suite:
 
-Instead, a **single configurable launch file** controls the complete simulator.
+```bash
+pytest test/
+```
 
-Launch file:
+Or:
+
+```bash
+python3 -m pytest test/
+```
+
+Individual tests:
+
+```bash
+pytest test/test_api.py
+```
+
+```bash
+pytest test/test_engine.py
+```
+
+```bash
+pytest test/test_scenario_loader.py
+```
+
+```bash
+pytest test/test_timeline.py
+```
+
+---
+
+# 🔍 Verify ROS 2 Interfaces
+
+After launching the simulator:
+
+```bash
+ros2 node list
+```
+
+Check available topics:
+
+```bash
+ros2 topic list
+```
+
+Inspect a topic:
+
+```bash
+ros2 topic echo /imu/data
+```
+
+Check topic information:
+
+```bash
+ros2 topic info /imu/data
+```
+
+---
+
+# 🧹 Clean Build
+
+If the package has stale build/install files:
+
+```bash
+cd ~/S12-Environment-Weather-Simulator
+
+rm -rf build install log
+
+source /opt/ros/jazzy/setup.bash
+
+colcon build --symlink-install
+
+source install/setup.bash
+```
+
+---
+
+# 🛠️ Troubleshooting
+
+## Package not found
 
 ```text
-launch/weather.launch.py
+Package 'environment_weather_simulator' not found
 ```
 
-This launch file:
-
-- Reads the selected weather effect
-- Loads the corresponding YAML configuration
-- Initializes the Environment Engine
-- Calls the World Generator
-- Generates the final Gazebo world
-- Starts the simulation
-
-This approach keeps the simulator modular and avoids maintaining multiple nearly identical launch files.
-
----
-
-# Running Different Weather Effects
-
-Examples:
+Run:
 
 ```bash
-# Clear Weather
-ros2 launch environment_weather_simulator weather.launch.py effect:=clear
-
-# Rain
-ros2 launch environment_weather_simulator weather.launch.py effect:=rain
-
-# Fog
-ros2 launch environment_weather_simulator weather.launch.py effect:=fog
-
-# Snow
-ros2 launch environment_weather_simulator weather.launch.py effect:=snow
-
-# Dust Storm
-ros2 launch environment_weather_simulator weather.launch.py effect:=dust
-
-# Thunder Storm
-ros2 launch environment_weather_simulator weather.launch.py effect:=storm
+source /opt/ros/jazzy/setup.bash
+source ~/S12-Environment-Weather-Simulator/install/setup.bash
 ```
 
-Only the value of the **effect** argument changes.
-
-No additional launch files are required.
-
-## Weather Selection
-
-A single launch file is responsible for all supported weather conditions.
-
-Example:
+Then verify:
 
 ```bash
-ros2 launch environment_weather_simulator weather.launch.py effect:=clear
+ros2 pkg prefix environment_weather_simulator
+```
+
+---
+
+## ANSA Digital Twin package not found
+
+```text
+Package 'ansa_digital_twin' not found
+```
+
+Source the Digital Twin workspace:
+
+```bash
+source ~/Spaceborn-Digital-Twin-main/install/setup.bash
+```
+
+Verify:
+
+```bash
+ros2 pkg prefix ansa_digital_twin
+```
+
+Then source S12 again:
+
+```bash
+source ~/S12-Environment-Weather-Simulator/install/setup.bash
+```
+
+---
+
+## Gazebo world does not start
+
+First generate the world manually:
+
+```bash
+ros2 run environment_weather_simulator world_generator --effect rain
+```
+
+Then verify that the generated world exists:
+
+```bash
+ls environment_weather_simulator/gazebo/worlds/generated_world.sdf
+```
+
+Then launch again.
+
+---
+
+# 📋 Quick Start
+
+For a complete weather test:
+
+```bash
+cd ~/S12-Environment-Weather-Simulator
+
+source /opt/ros/jazzy/setup.bash
+
+colcon build --symlink-install
+
+source install/setup.bash
+
+ros2 launch environment_weather_simulator ansa_drone_weather.launch.py effect:=rain
+```
+
+---
+
+# ⚡ Quick Commands
+
+### Weather
+
+```bash
 ros2 launch environment_weather_simulator weather.launch.py effect:=rain
 ros2 launch environment_weather_simulator weather.launch.py effect:=fog
 ros2 launch environment_weather_simulator weather.launch.py effect:=snow
 ros2 launch environment_weather_simulator weather.launch.py effect:=dust
 ros2 launch environment_weather_simulator weather.launch.py effect:=storm
+ros2 launch environment_weather_simulator weather.launch.py effect:=clear
 ```
 
-The launch file automatically:
+### Environment Models
 
-1. Reads the selected weather effect.
-2. Loads the corresponding YAML configuration.
-3. Initializes the Environment Engine.
-4. Generates the required Gazebo world.
-5. Inserts the required environmental effects.
-6. Starts the simulation using the generated world.
+```bash
+ros2 run environment_weather_simulator wind_test
+ros2 run environment_weather_simulator solar_test
+ros2 run environment_weather_simulator emi_test
+ros2 run environment_weather_simulator environment_publisher
+```
 
-No separate launch files are required for individual weather conditions. All weather modes are controlled through a single configurable launch interface.
----
+### ANSA Drone
 
-# Module Responsibilities
+```bash
+ros2 launch environment_weather_simulator ansa_drone_weather.launch.py effect:=rain
+```
 
-## Configuration
+### Tests
 
-Stores predefined weather scenarios such as clear weather, rain, fog, snow, storm, and dust storm.
-
----
-
-## Scenario Loader
-
-Loads scenario configurations from YAML files and prepares them for execution.
+```bash
+pytest test/
+```
 
 ---
 
-## Timeline
+# 🔮 Future Roadmap
 
-Controls simulation timing, transitions, scheduling, and progression of environmental events.
-
----
-
-## Environment Engine
-
-Acts as the core controller of the simulator.
-
-Responsibilities include:
-
-* Coordinating all weather modules
-* Managing simulation state
-* Producing the current Weather State
-* Providing a unified interface for integration modules
-
-The Environment Engine is the central component of the project.
+* Real-time environmental parameter control
+* Dynamic weather switching
+* Advanced sensor degradation models
+* Advanced atmospheric models
+* Real-time Digital Twin synchronization
+* RViz2 environmental visualization
+* Advanced Gazebo sensor effects
+* Hardware-in-the-loop integration
+* Scenario recording and replay
+* Docker deployment
+* CI/CD integration
 
 ---
 
-## Weather Modules
+# 📄 License
 
-The simulator is divided into independent weather models:
-
-* Precipitation
-* Wind
-* Solar & Thermal
-* EMI (Electromagnetic Interference)
-
-Each module is responsible only for its own environmental domain.
+This project is licensed under the **MIT License**.
 
 ---
 
-## Integration Layer
+<div align="center">
 
-The Integration layer exports weather information to external systems.
+Developed by **Chetanya Barodiya**
 
-Available integrations:
+**Spaceborn Autonomous Systems**
 
-* Digital Twin
-* Digital Earth
-* Navigation
-* Vision
-* LiDAR
-
-Each bridge acts as an adapter between the Environment Engine and an external consumer. Bridges do not implement weather simulation logic.
-
----
-
-# Design Principles
-
-* Modular architecture
-* Separation of responsibilities
-* Independent weather models
-* Centralized Environment Engine
-* Decoupled integration interfaces
-* ROS 2 compatible design
-* Extensible for future weather models and external systems
-
----
-
-# Development Status
-
-| Module               | Status                   |
-| -------------------- | ------------------------ |
-| Project Architecture | ✅ Completed              |
-| Configuration        | ✅ Completed              |
-| Scenario Design      | ✅ Completed              |
-| Timeline Design      | ✅ Completed              |
-| Engine Design        | ⏳ Pending Implementation |
-| Weather Modules      | ⏳ Pending Implementation |
-| Integration Bridges  | ⏳ Pending Implementation |
-| Testing              | ⏳ Pending                |
-| Documentation        | ⏳ Ongoing                |
-
----
-
-## Note
-
-This document represents the Phase 1 architectural design of the Environment & Weather Simulator. It is intended to help team members understand the overall system organization and module responsibilities before implementation. The documentation will be updated in later phases as the simulator is fully implemented and integrated with other project components.
-
+</div>
